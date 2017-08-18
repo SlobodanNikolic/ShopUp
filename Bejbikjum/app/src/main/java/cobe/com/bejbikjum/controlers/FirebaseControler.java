@@ -21,6 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -561,43 +562,34 @@ public class FirebaseControler {
     }
 
     public void getTopRated(){
-        db.collection("top_rated")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            AppControler.getInstance().clearTopRated();
-                            ArrayList<Item> helperList = null;
 
-                            if(!task.getResult().isEmpty()) {
-                                helperList = new ArrayList<Item>();
+        CollectionReference colRef = db.collection("items");
+        colRef.orderBy("timesRated").limit(100);
 
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Item helperItem = new Item();
-                                    helperList.add(helperItem.parseMap(document.getData()));
+        colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
 
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
-                                }
+                    ArrayList<Item> topRatedItems = new ArrayList<Item>();
 
-                                AppControler.getInstance().setTopRatedItems(helperList);
-                            }
-
-                            if(listener!=null){
-                                listener.onTopRated(helperList);
-                            }
-
-
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                            if(listener!=null)
-                                listener.onTopRatedFailed();
-                        }
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Map<String, Object> itemMap = document.getData();
+                        Item newItem = new Item().parseMap(itemMap);
+                        topRatedItems.add(newItem);
                     }
-                });
+
+                    if(listener!=null)
+                        listener.onTopRated(topRatedItems);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
     }
 
-    public interface TopRatedListener {
+    public interface DownloadListener {
         // These methods are the different events and
         // need to pass relevant arguments related to the event triggered
         // or when data has been loaded
@@ -607,10 +599,10 @@ public class FirebaseControler {
 
     // Step 2 - This variable represents the listener passed in by the owning object
     // The listener must implement the events interface and passes messages up to the parent.
-    private TopRatedListener listener;
+    private DownloadListener listener;
 
     // Assign the listener implementing events interface that will receive the events
-    public void setTopRatedListener(TopRatedListener listener) {
+    public void setDownloadListener(DownloadListener listener) {
         this.listener = listener;
     }
 

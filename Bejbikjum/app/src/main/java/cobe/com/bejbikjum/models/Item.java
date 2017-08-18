@@ -167,6 +167,7 @@ public class Item implements Parcelable {
         item.put("shopUid", shopUid);
         item.put("shopName", shopName);
         item.put("price", price);
+        item.put("itemType", itemType);
 
         return item;
     }

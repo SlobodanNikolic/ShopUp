@@ -68,16 +68,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view, int position) {
                 int positionWithAds = position - (position/12 +1);
 
-                ArrayList<String> itemUrls = new ArrayList<String>();
-                itemUrls.add(items.get(0).getStandard());
-                itemUrls.add(items.get(1).getStandard());
-                itemUrls.add(items.get(2).getStandard());
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("items", itemUrls);
-
                 Intent imageDetailsIntent = new Intent(getApplicationContext(), ImageDetailsActivity.class);
-                imageDetailsIntent.putExtras(bundle);
+                imageDetailsIntent.putExtra("item", items.get(positionWithAds));
                 startActivity(imageDetailsIntent);
             }
 
@@ -87,12 +79,16 @@ public class HomeActivity extends AppCompatActivity {
             }
         }));
 
-        FirebaseControler.getInstance().setTopRatedListener(new FirebaseControler.TopRatedListener() {
+        FirebaseControler.getInstance().setDownloadListener(new FirebaseControler.DownloadListener() {
             @Override
             public void onTopRated(ArrayList<Item> topRatedItems) {
                 if(topRatedItems!=null) {
                     Log.d(TAG, "Top rated items ready: " + topRatedItems.size());
-                    items = topRatedItems;
+                    items.clear();
+
+                    for(Item item : topRatedItems)
+                        items.add(item);
+
                     mAdapter.notifyDataSetChanged();
                 }
                 else {
