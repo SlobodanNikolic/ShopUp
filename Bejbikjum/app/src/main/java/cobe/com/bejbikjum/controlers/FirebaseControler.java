@@ -368,7 +368,7 @@ public class FirebaseControler {
 
     public void loadFirestoreUserById(final FirebaseUser u){
 
-        String uid = u.getUid();
+        final String uid = u.getUid();
         DocumentReference docRef = db.collection("users").document(uid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -386,7 +386,7 @@ public class FirebaseControler {
 
                     } else {
                         Log.d(TAG, "No such document");
-                        addFirestoreUser(u, null, "");
+                        loadFirestoreSellerById(uid);
                         // TODO: 30.8.18.
                         //Resiti sve mogucnosti
                     }
@@ -417,8 +417,8 @@ public class FirebaseControler {
                     } else {
                         Log.d(TAG, "No such document");
 
-                        Intent sellerInfoIntent = new Intent(currentContext.getApplicationContext(), SellerInfoActivity.class);
-                        currentContext.startActivity(sellerInfoIntent);
+                        Intent shopInfoIntent = new Intent(currentContext.getApplicationContext(), ShopInfoActivity.class);
+                        currentContext.startActivity(shopInfoIntent);
 
                         // TODO: 30.8.18.
                         //Resiti sve mogucnosti

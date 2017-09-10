@@ -53,6 +53,8 @@ public class TakePhotoActivity extends AppCompatActivity {
     private static final int IMAGE_ORIENTATION = 90;
     private static final int CAMERA_REQUEST_CODE = 1888;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+    private static final int CAMERA_PERMISSION_CODE = 2;
+
     private CameraManager cameraManager;
     private int cameraFacing;
     private TextureView.SurfaceTextureListener surfaceTextureListener;
@@ -81,14 +83,15 @@ public class TakePhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_take_photo);
 
         requestWritePermission();
+        newCameraOnCreate();
 
         cameraPreview = (TextureView) findViewById(R.id.camera_preview);
         overlay = (RelativeLayout) findViewById(R.id.overlay);
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
 
 
 
@@ -208,6 +211,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(TakePhotoActivity.this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Log.d("TakePhotoActivity", "Should show request permission window - WRITE_EXTERNAL");
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -221,8 +225,30 @@ public class TakePhotoActivity extends AppCompatActivity {
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
-        } else {
-            // Permission has already been granted
+        }
+
+        if (ContextCompat.checkSelfPermission(TakePhotoActivity.this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(TakePhotoActivity.this,
+                    Manifest.permission.CAMERA)) {
+                Log.d("TakePhotoActivity", "Should show request permission window - Camera");
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(TakePhotoActivity.this,
+                        new String[]{Manifest.permission.CAMERA},
+                        CAMERA_PERMISSION_CODE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
         }
     }
 
@@ -231,6 +257,7 @@ public class TakePhotoActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                Log.d("TakePhotoActivity", "onRequestPermissionsResult - WRITE");
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -243,7 +270,26 @@ public class TakePhotoActivity extends AppCompatActivity {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                return;
+                break;
+
+            }
+
+            case CAMERA_PERMISSION_CODE: {
+                Log.d("TakePhotoActivity", "onRequestPermissionsResult - CAMERA");
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                    createImageGallery();
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                break;
             }
 
             // other 'case' lines to check for other

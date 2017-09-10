@@ -6,47 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".activities.UploadPhotoActivity">
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="64dp"
-        android:layout_marginStart="64dp"
-        android:text="Link your account with Facebook and add the photos from your profile"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/upload_photo_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Shop Name"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/image1"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
         android:background="@drawable/border"
         android:clickable="true"
         android:scaleType="centerInside"
         android:src="@drawable/plus"
-        android:layout_marginRight="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload_photo_title"
-        android:layout_marginEnd="8dp">
+        tools:layout_editor_absoluteY="80dp">
 
     </ImageView>
 
@@ -56,15 +27,12 @@
         android:layout_height="150dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="32dp"
         android:background="@drawable/border"
         android:clickable="true"
         android:scaleType="centerInside"
         android:src="@drawable/plus"
-        android:layout_marginLeft="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload_photo_title"
-        android:layout_marginStart="8dp">
+        tools:layout_editor_absoluteY="80dp">
 
     </ImageView>
 
@@ -105,29 +73,5 @@
         android:contentDescription="TODO">
 
     </ImageView>
-
-    <Button
-        android:id="@+id/link_fb_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Link Facebook"
-        app:layout_constraintBottom_toTopOf="@+id/textView7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/done_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Done"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image3" />
 
 </android.support.constraint.ConstraintLayout>

@@ -2,6 +2,7 @@ package cobe.com.bejbikjum.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
@@ -14,6 +15,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import java.io.Console;
+import java.util.Arrays;
+
 import cobe.com.bejbikjum.R;
 
 public class UploadPhotoActivity extends AppCompatActivity {
@@ -21,7 +25,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
     public ImageView[] imageViews = new ImageView[4];
     public static final int PICK_IMAGE = 1;
     public static final int TAKE_PHOTO = 2;
-
+    public int imageViewSelected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +40,45 @@ public class UploadPhotoActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_upload_photo);
 
+
         imageViews[0]=(ImageView)findViewById(R.id.image1);
         imageViews[1]=(ImageView)findViewById(R.id.image2);
         imageViews[2]=(ImageView)findViewById(R.id.image3);
         imageViews[3]=(ImageView)findViewById(R.id.image4);
 
-        for (ImageView image: imageViews) {
-            image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showChooser();
-                }
-            });
-        }
+
+        imageViews[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageViewSelected = 0;
+                showChooser();
+            }
+        });
+
+        imageViews[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageViewSelected = 1;
+                showChooser();
+            }
+        });
+
+        imageViews[2].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageViewSelected = 2;
+                showChooser();
+            }
+        });
+
+        imageViews[3].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageViewSelected = 3;
+                showChooser();
+            }
+        });
+
 
     }
 
@@ -86,6 +116,11 @@ public class UploadPhotoActivity extends AppCompatActivity {
     {
         if (requestCode == PICK_IMAGE) {
             //TODO: action
+            if(data!=null) {
+                Uri selectedImage = data.getData();
+                imageViews[imageViewSelected].setImageURI(selectedImage);
+            }
+
         }
     }
 
