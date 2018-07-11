@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -26,10 +27,11 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  * Created by Lincoln on 31/03/16.
  */
 
-public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHolder> {
+public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Image> images;
     private Context mContext;
+    private int currentImageIndex =0;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView thumbnail;
@@ -40,6 +42,15 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
         }
     }
 
+    public class AdViewHolder extends RecyclerView.ViewHolder {
+        public TextView ad_title;
+
+        public AdViewHolder(View view) {
+            super(view);
+            ad_title = (TextView) view.findViewById(R.id.ad_title);
+        }
+    }
+
 
     public GalleryAdapter(Context context, List<Image> images) {
         mContext = context;
@@ -47,28 +58,55 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyViewHo
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.gallery_thumbnail, parent, false);
-
-        return new MyViewHolder(itemView);
+    public int getItemViewType(int position) {
+        // Just as an example, return 0 or 2 depending on position
+        // Note that unlike in ListView adapters, types don't have to be contiguous
+        if(position%12==0) return 1;
+        else return 0;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        Image image = images.get(position);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        RequestOptions myOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(mContext).load(image.getMedium())
-                .thumbnail(0.5f)
-                .transition(withCrossFade())
-                .apply(myOptions)
-                .into(holder.thumbnail);
+        if(viewType == 0) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.gallery_thumbnail, parent, false);
+
+            return new MyViewHolder(itemView);
+        }
+        else{
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.ad_text_thumbnail, parent, false);
+
+            return new AdViewHolder(itemView);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        if(holder.getItemViewType()==0) {
+
+            int positionWithAds = position - (position/12 +1);
+            Image image = images.get(positionWithAds);
+
+            MyViewHolder imageHolder = (MyViewHolder) holder;
+
+            RequestOptions myOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
+            Glide.with(mContext).load(image.getMedium())
+                    .thumbnail(0.5f)
+                    .transition(withCrossFade())
+                    .apply(myOptions)
+                    .into(imageHolder.thumbnail);
+        }
+        else{
+
+        }
     }
 
     @Override
     public int getItemCount() {
-        return images.size();
+        return images.size() + images.size()/12+1;
     }
 
     public interface ClickListener {
