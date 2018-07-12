@@ -1,6 +1,7 @@
 package cobe.com.bejbikjum.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -9,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -59,6 +61,30 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+
+        recyclerView.addOnItemTouchListener(new GalleryAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new GalleryAdapter.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                int positionWithAds = position - (position/12 +1);
+
+                ArrayList<String> imageUrls = new ArrayList<String>();
+                imageUrls.add(images.get(0).getMedium());
+                imageUrls.add(images.get(1).getMedium());
+                imageUrls.add(images.get(2).getMedium());
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("images", imageUrls);
+
+                Intent imageDetailsIntent = new Intent(getApplicationContext(), ImageDetailsActivity.class);
+                imageDetailsIntent.putExtras(bundle);
+                startActivity(imageDetailsIntent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
         fetchImages();
     }
