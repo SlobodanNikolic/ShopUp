@@ -3,7 +3,6 @@ package cobe.com.bejbikjum.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,13 +26,13 @@ import java.util.ArrayList;
 import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.adapters.GalleryAdapter;
 import cobe.com.bejbikjum.app.AppController;
-import cobe.com.bejbikjum.models.Image;
+import cobe.com.bejbikjum.models.Item;
 
 public class HomeActivity extends AppCompatActivity {
 
     private String TAG = HomeActivity.class.getSimpleName();
     private static final String endpoint = "https://api.androidhive.info/json/glide.json";
-    private ArrayList<Image> images;
+    private ArrayList<Item> items;
     private ProgressDialog pDialog;
     private GalleryAdapter mAdapter;
     private RecyclerView recyclerView;
@@ -54,8 +53,8 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         pDialog = new ProgressDialog(this);
-        images = new ArrayList<>();
-        mAdapter = new GalleryAdapter(getApplicationContext(), images);
+        items = new ArrayList<>();
+        mAdapter = new GalleryAdapter(getApplicationContext(), items);
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -67,13 +66,13 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view, int position) {
                 int positionWithAds = position - (position/12 +1);
 
-                ArrayList<String> imageUrls = new ArrayList<String>();
-                imageUrls.add(images.get(0).getMedium());
-                imageUrls.add(images.get(1).getMedium());
-                imageUrls.add(images.get(2).getMedium());
+                ArrayList<String> itemUrls = new ArrayList<String>();
+                itemUrls.add(items.get(0).getStandard());
+                itemUrls.add(items.get(1).getStandard());
+                itemUrls.add(items.get(2).getStandard());
 
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("images", imageUrls);
+                bundle.putSerializable("items", itemUrls);
 
                 Intent imageDetailsIntent = new Intent(getApplicationContext(), ImageDetailsActivity.class);
                 imageDetailsIntent.putExtras(bundle);
@@ -101,20 +100,19 @@ public class HomeActivity extends AppCompatActivity {
                         Log.d(TAG, response.toString());
                         pDialog.hide();
 
-                        images.clear();
+                        items.clear();
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 JSONObject object = response.getJSONObject(i);
-                                Image image = new Image();
+                                Item image = new Item();
                                 image.setName(object.getString("name"));
 
                                 JSONObject url = object.getJSONObject("url");
                                 image.setSmall(url.getString("small"));
                                 image.setMedium(url.getString("medium"));
-                                image.setLarge(url.getString("large"));
                                 image.setTimestamp(object.getString("timestamp"));
 
-                                images.add(image);
+                                items.add(image);
 
                             } catch (JSONException e) {
                                 Log.e(TAG, "Json parsing error: " + e.getMessage());

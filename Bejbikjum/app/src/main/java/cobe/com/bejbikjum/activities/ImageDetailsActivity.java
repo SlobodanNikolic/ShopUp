@@ -27,7 +27,6 @@ public class ImageDetailsActivity extends AppCompatActivity {
 
     private String imageUrl;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

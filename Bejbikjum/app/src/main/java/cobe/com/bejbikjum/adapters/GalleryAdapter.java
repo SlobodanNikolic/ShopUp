@@ -18,7 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import java.util.List;
 
 import cobe.com.bejbikjum.R;
-import cobe.com.bejbikjum.models.Image;
+import cobe.com.bejbikjum.models.Item;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -29,7 +29,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Image> images;
+    private List<Item> images;
     private Context mContext;
     private int currentImageIndex =0;
 
@@ -52,7 +52,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
-    public GalleryAdapter(Context context, List<Image> images) {
+    public GalleryAdapter(Context context, List<Item> images) {
         mContext = context;
         this.images = images;
     }
@@ -88,12 +88,12 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if(holder.getItemViewType()==0) {
 
             int positionWithAds = position - (position/12 +1);
-            Image image = images.get(positionWithAds);
+            Item image = images.get(positionWithAds);
 
             MyViewHolder imageHolder = (MyViewHolder) holder;
 
             RequestOptions myOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
-            Glide.with(mContext).load(image.getMedium())
+            Glide.with(mContext).load(image.getStandard())
                     .thumbnail(0.5f)
                     .transition(withCrossFade())
                     .apply(myOptions)
