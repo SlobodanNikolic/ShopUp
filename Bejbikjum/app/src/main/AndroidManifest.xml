@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="cobe.com.bejbikjum">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".app.AppController"
@@ -23,7 +29,7 @@
             android:name=".activities.SellerInfoActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
-            android:name=".ShopInfoActivity"
+            android:name=".activities.ShopInfoActivity"
             android:label="@string/title_activity_shop_info"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
@@ -36,7 +42,16 @@
         <activity
             android:name=".activities.ImageDetailsActivity"
             android:label="@string/title_activity_image_details"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name=".activities.MyShopActivity"
+            android:label="@string/title_activity_my_shop" />
+        <activity
+            android:name=".activities.TakePhotoActivity"
+            android:label="@string/title_activity_take_photo" />
+        <activity
+            android:name=".activities.UploadPhotoActivity"
+            android:label="@string/title_activity_upload_photo"></activity>
     </application>
 
 </manifest>

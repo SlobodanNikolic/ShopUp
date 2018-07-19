@@ -12,7 +12,7 @@ import android.widget.Button;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cobe.com.bejbikjum.R;
-import cobe.com.bejbikjum.ShopInfoActivity;
+import cobe.com.bejbikjum.activities.ShopInfoActivity;
 
 public class SellerInfoActivity extends AppCompatActivity {
 

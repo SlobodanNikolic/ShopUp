@@ -1,4 +1,4 @@
-package cobe.com.bejbikjum;
+package cobe.com.bejbikjum.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,9 @@ import android.widget.Button;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.activities.HomeActivity;
+import cobe.com.bejbikjum.activities.MyShopActivity;
 import cobe.com.bejbikjum.adapters.ProductTypeAdapter;
 
 public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAdapter.ItemClickListener {
@@ -51,13 +53,32 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
+        //For opening the home screen
+//        continueButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+//                startActivity(homeIntent);
+//            }
+//        });
+
+        //For opening the myShop screen
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(homeIntent);
+                Intent myShopIntent = new Intent(getApplicationContext(), MyShopActivity.class);
+                startActivity(myShopIntent);
             }
         });
+
+        //For opening the uploadPhoto screen
+//        continueButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent uploadPhotoIntent = new Intent(getApplicationContext(), UploadPhotoActivity.class);
+//                startActivity(uploadPhotoIntent);
+//            }
+//        });
     }
 
     @Override

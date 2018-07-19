@@ -4,4 +4,7 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_image_details">ImageDetailsActivity</string>
+    <string name="title_activity_my_shop">MyShopActivity</string>
+    <string name="title_activity_take_photo">TakePhotoActivity</string>
+    <string name="title_activity_upload_photo">UploadPhotoActivity</string>
 </resources>

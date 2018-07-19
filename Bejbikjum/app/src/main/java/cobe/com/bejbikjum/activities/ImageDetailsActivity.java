@@ -42,7 +42,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_details);
         ButterKnife.bind(this);
 
-        ArrayList<String> images = getIntent().getStringArrayListExtra("images");
+        ArrayList<String> images = getIntent().getStringArrayListExtra("items");
         imagePager.setAdapter(new SlidingImageAdapter(ImageDetailsActivity.this, images));
 
     }
