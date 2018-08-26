@@ -3,12 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="cobe.com.bejbikjum">
 
+    <uses-sdk android:minSdkVersion="16" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".app.AppController"
@@ -51,7 +56,41 @@
             android:label="@string/title_activity_take_photo" />
         <activity
             android:name=".activities.UploadPhotoActivity"
-            android:label="@string/title_activity_upload_photo"></activity>
+            android:label="@string/title_activity_upload_photo" />
+        <activity
+            android:name=".activities.TakePhotoLowActivity"
+            android:label="@string/title_activity_take_photo_low" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="622911124769290"
+            tools:replace="android:value" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider622911124769290"
+            android:exported="true" />
+
+        <activity
+            android:name=".activities.PasswordActivity"
+            android:label="@string/title_activity_password"></activity>
     </application>
 
 </manifest>

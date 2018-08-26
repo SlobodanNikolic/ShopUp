@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="@android:color/white"
-    tools:context="cobe.com.bejbikjum.RegisterActivity">
+    tools:context="cobe.com.bejbikjum.activities.SellerInfoActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -36,7 +36,7 @@
         android:gravity="center"
         android:text="or"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/facebook_login"
         app:layout_constraintEnd_toEndOf="@+id/imageView2"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="@+id/imageView" />
@@ -147,7 +147,7 @@
         app:layout_constraintTop_toBottomOf="@+id/password_input" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/facebook_login"
         android:layout_width="290dp"
         android:layout_height="48dp"
         android:layout_marginBottom="16dp"
@@ -170,7 +170,7 @@
         android:layout_marginBottom="32dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/facebook_login"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/line" />
 
@@ -181,7 +181,7 @@
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/facebook_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/line" />
 

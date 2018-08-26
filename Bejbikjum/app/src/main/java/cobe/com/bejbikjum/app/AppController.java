@@ -1,16 +1,22 @@
 package cobe.com.bejbikjum.app;
 
 import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-public class AppController extends Application {
+public class AppController extends MultiDexApplication {
 
     public static final String TAG = AppController.class
             .getSimpleName();
+
 
     private RequestQueue mRequestQueue;
 
@@ -20,7 +26,12 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        FacebookSdk.setApplicationId("622911124769290");
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
     }
+
+
 
     public static synchronized AppController getInstance() {
         return mInstance;

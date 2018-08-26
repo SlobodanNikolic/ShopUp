@@ -65,6 +65,8 @@ public class UploadPhotoActivity extends AppCompatActivity {
                         }
                         else{
                             Log.d("upload", "Device SDK API lower than 21");
+                            Intent addPhotoIntent = new Intent(getApplicationContext(), TakePhotoLowActivity.class);
+                            startActivity(addPhotoIntent);
                         }
                     }
                 })

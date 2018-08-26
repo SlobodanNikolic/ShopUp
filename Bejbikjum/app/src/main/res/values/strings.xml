@@ -7,4 +7,9 @@
     <string name="title_activity_my_shop">MyShopActivity</string>
     <string name="title_activity_take_photo">TakePhotoActivity</string>
     <string name="title_activity_upload_photo">UploadPhotoActivity</string>
+    <string name="title_activity_take_photo_low">TakePhotoLowActivity</string>
+    <string name="facebook_app_id">622911124769290</string>
+    <string name="fb_login_protocol_scheme">fb622911124769290</string>
+    <string name="facebook_application_id" translatable="false">APP_ID</string>
+    <string name="title_activity_password">PasswordActivity</string>
 </resources>

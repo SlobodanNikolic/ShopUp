@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "731342737040",
+    "firebase_url": "https://shopup-76823.firebaseio.com",
+    "project_id": "shopup-76823",
+    "storage_bucket": "shopup-76823.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731342737040:android:e152fd3c5f56c9ff",
+        "android_client_info": {
+          "package_name": "cobe.com.bejbikjum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "731342737040-shg35ivkikukjqqbn8ftib13u688vi3c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cobe.com.bejbikjum",
+            "certificate_hash": "f2fbcd0f3e99cfd5c42a5a4a43e3819106e9b3be"
+          }
+        },
+        {
+          "client_id": "731342737040-bavrdbk7ojohqdhi3tdu6852n172bggo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtnfPqBx6EmUUYCeXrkHJ07gVOunt6W3Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "731342737040-bavrdbk7ojohqdhi3tdu6852n172bggo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
