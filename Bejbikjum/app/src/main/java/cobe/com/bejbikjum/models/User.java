@@ -22,7 +22,12 @@ public class User {
     }
 
     public User(){
-
+        this.uid = "";
+        this.username = "";
+        this.email = "";
+        this.password = "";
+        this.fbid = "";
+        this.fullName = "";
     }
 
     public Map toMap(){

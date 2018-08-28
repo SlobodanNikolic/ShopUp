@@ -8,9 +8,26 @@ public class AppControler {
     private User currentUser;
     public Boolean isSeller;
 
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public Boolean getSeller() {
+        return isSeller;
+    }
+
+    public void setSeller(Boolean seller) {
+        isSeller = seller;
+    }
+
     private AppControler(){
         isSeller = false;
         currentUser = new User();
+
     };
 
     public static AppControler getInstance(){

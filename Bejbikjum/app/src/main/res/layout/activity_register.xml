@@ -47,7 +47,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="44dp"
         android:layout_marginRight="44dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:gravity="center|end"
         android:text="Seller? Click here"
         android:textColor="@color/colorPrimary"
@@ -95,7 +95,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/input_rect"
         android:ems="10"
         android:hint="Email"
@@ -114,7 +114,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/input_rect"
         android:ems="10"
         android:hint="Password"
@@ -125,6 +125,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_input" />
 
+    <EditText
+        android:id="@+id/password_repeat_input"
+        android:layout_width="290dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/input_rect"
+        android:ems="10"
+        android:hint="Repeat password"
+        android:inputType="textPassword"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_input" />
+
     <Button
         android:id="@+id/register_button"
         android:layout_width="290dp"
@@ -133,13 +152,13 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/button_green_rect"
         android:backgroundTint="@android:color/holo_green_light"
         android:text="Sign up"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_input" />
+        app:layout_constraintTop_toBottomOf="@+id/password_repeat_input" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/facebook_login"
@@ -179,5 +198,30 @@
         app:layout_constraintBottom_toTopOf="@+id/facebook_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/line" />
+
+    <LinearLayout
+        android:id="@+id/progressLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffffff"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="Please wait until the registration is complete. This will only take a second."
+            android:textSize="14sp" />
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

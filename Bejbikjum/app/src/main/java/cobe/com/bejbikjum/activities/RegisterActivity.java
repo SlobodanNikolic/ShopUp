@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +44,14 @@ import cobe.com.bejbikjum.controlers.FirebaseControler;
 public class RegisterActivity extends AppCompatActivity {
 
     @BindView(R.id.register_button) Button registerButton;
-    @BindView(R.id.sellerButton) TextView sellerButton;
-    @BindView(R.id.email_input) TextView emailInput;
-    @BindView(R.id.password_input) TextView passwordInput;
+    @BindView(R.id.sellerButton)
+    TextView sellerButton;
+    @BindView(R.id.email_input) EditText emailInput;
+    @BindView(R.id.password_input) EditText passwordInput;
+    @BindView(R.id.password_repeat_input) EditText passwordRepeatInput;
+    @BindView(R.id.progressLayout)
+    LinearLayout progressLayout;
+
 
 
     private static final int RC_SIGN_IN = 123;
@@ -66,14 +73,20 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseControler.getInstance().setContext(this, this);
+
+        hideProgressBar();
         setFacebookLoginButton();
 
         //Click listeners
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createAccount(emailInput.getText().toString(), passwordInput.getText().toString());
+
+                if(validateForm()) {
+                    showProgressBar();
+                    FirebaseControler.getInstance().createAccount(emailInput.getText().toString(), passwordInput.getText().toString());
+                }
             }
         });
 
@@ -85,123 +98,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
-
-    private void createAccount(String email, String password) {
-        Log.d(TAG, "createAccount:" + email);
-        if (!validateForm()) {
-            return;
-        }
-
-//        showProgressDialog();
-
-        // [START create_user_with_email]
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            sendEmailVerification();
-                            FirebaseControler.getInstance().setUser(user);
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-
-                        // [START_EXCLUDE]
-//                        hideProgressDialog();
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END create_user_with_email]
-    }
-
-    private void signIn(String email, String password) {
-        Log.d(TAG, "signIn:" + email);
-        if (!validateForm()) {
-            return;
-        }
-
-//        showProgressDialog();
-
-        // [START sign_in_with_email]
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            FirebaseControler.getInstance().setUser(user);
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-
-//                        // [START_EXCLUDE]
-//                        if (!task.isSuccessful()) {
-//                            mStatusTextView.setText(R.string.auth_failed);
-//                        }
-//                        hideProgressDialog();
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END sign_in_with_email]
-    }
-
-    private void signOut() {
-        mAuth.signOut();
-        updateUI(null);
-    }
-
-    private void sendEmailVerification() {
-        // Disable button
-
-        // Send verification email
-        // [START send_email_verification]
-        final FirebaseUser user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
-
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this,
-                                    "Verification email sent to " + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
-                            Toast.makeText(RegisterActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END send_email_verification]
     }
 
     private boolean validateForm() {
@@ -223,24 +119,31 @@ public class RegisterActivity extends AppCompatActivity {
             passwordInput.setError(null);
         }
 
+        String passwordRepeat = passwordRepeatInput.getText().toString();
+        if (TextUtils.isEmpty(passwordRepeat)) {
+            passwordRepeatInput.setError("Required.");
+            valid = false;
+        } else if(password.compareTo(passwordRepeat)!=0){
+            passwordRepeatInput.setError("Passwords don't match.");
+            valid = false;
+        }
+        else{
+            passwordRepeatInput.setError(null);
+        }
+
+
         return valid;
     }
 
-    private void updateUI(FirebaseUser user) {
-//        hideProgressDialog();
-        if (user != null) {
-            Log.d(TAG, "User logged in");
-
-            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-            startActivity(homeIntent);
-//            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
-//                    user.getEmail(), user.isEmailVerified()));
-//            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
-
-        } else {
-            Log.d(TAG, "User not logged in");
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        if(FirebaseControler.getInstance().getRegistrationFailed()){
+            Toast.makeText(this, "Registration not completed. Please check your internet connection.",  Toast.LENGTH_LONG);
+            return;
+        }else {
+            FirebaseControler.getInstance().checkCurrentUser();
         }
     }
 
@@ -249,28 +152,49 @@ public class RegisterActivity extends AppCompatActivity {
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.facebook_login);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProgressBar();
+            }
+        });
+
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 FacebookControler.getInstance().setToken(loginResult.getAccessToken());
-                handleFacebookAccessToken(FacebookControler.getInstance().getToken());
+                FirebaseControler.getInstance().handleFacebookAccessToken(FacebookControler.getInstance().getToken());
+                hideProgressBar();
             }
 
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
+                hideProgressBar();
                 // ...
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
+                hideProgressBar();
                 // ...
             }
         });
     }
+
+    public void showProgressBar(){
+        registerButton.setVisibility(View.INVISIBLE);
+        progressLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar(){
+        registerButton.setVisibility(View.VISIBLE);
+        progressLayout.setVisibility(View.INVISIBLE);
+    }
+
 // ...
 
     @Override
@@ -281,30 +205,6 @@ public class RegisterActivity extends AppCompatActivity {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-
-                        // ...
-                    }
-                });
-    }
 
 }
