@@ -53,15 +53,6 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
-        //For opening the home screen
-//        continueButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-//                startActivity(homeIntent);
-//            }
-//        });
-
         //For opening the myShop screen
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,14 +62,6 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
             }
         });
 
-        //For opening the uploadPhoto screen
-//        continueButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent uploadPhotoIntent = new Intent(getApplicationContext(), UploadPhotoActivity.class);
-//                startActivity(uploadPhotoIntent);
-//            }
-//        });
     }
 
     @Override

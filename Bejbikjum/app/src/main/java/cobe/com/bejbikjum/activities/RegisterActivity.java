@@ -166,7 +166,6 @@ public class RegisterActivity extends AppCompatActivity {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 FacebookControler.getInstance().setToken(loginResult.getAccessToken());
                 FirebaseControler.getInstance().handleFacebookAccessToken(FacebookControler.getInstance().getToken());
-                hideProgressBar();
             }
 
             @Override

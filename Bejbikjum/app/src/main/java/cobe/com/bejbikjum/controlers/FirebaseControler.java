@@ -20,6 +20,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -27,7 +28,11 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import cobe.com.bejbikjum.activities.HomeActivity;
+import cobe.com.bejbikjum.activities.MyShopActivity;
 import cobe.com.bejbikjum.activities.RegisterActivity;
+import cobe.com.bejbikjum.activities.SellerInfoActivity;
+import cobe.com.bejbikjum.activities.ShopInfoActivity;
+import cobe.com.bejbikjum.models.Seller;
 import cobe.com.bejbikjum.models.User;
 
 
@@ -136,11 +141,10 @@ public class FirebaseControler {
         if (user != null) {
             // TODO: 27.8.18.
             //Ubaciti load podataka sa firestore-a
-
+            loadFirestoreUserById(u);
             Log.d(TAG, "User logged in");
 
-            Intent homeIntent = new Intent(currentContext.getApplicationContext(), HomeActivity.class);
-            currentContext.startActivity(homeIntent);
+
 
 //            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
 //                    user.getEmail(), user.isEmailVerified()));
@@ -154,6 +158,30 @@ public class FirebaseControler {
             currentContext.startActivity(registerIntent);
         }
     }
+
+    private void updateUISeller(){
+        if (user != null) {
+            // TODO: 27.8.18.
+            //Ubaciti load podataka sa firestore-a
+            loadFirestoreSellerById();
+            Log.d(TAG, "User logged in");
+
+
+        } else {
+            registrationFailed = true;
+            Log.d(TAG, "User not logged in");
+            Intent registerIntent = new Intent(currentContext.getApplicationContext(), RegisterActivity.class);
+            currentContext.startActivity(registerIntent);
+        }
+    }
+
+    private void registrationFailed(){
+        registrationFailed = true;
+        Log.d(TAG, "User not logged in");
+        Intent registerIntent = new Intent(currentContext.getApplicationContext(), RegisterActivity.class);
+        currentContext.startActivity(registerIntent);
+    }
+
 
     public void checkCurrentUser(){
         user = mAuth.getCurrentUser();
@@ -179,6 +207,32 @@ public class FirebaseControler {
                             Toast.makeText(currentContext, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
+                        }
+
+
+                    }
+                });
+    }
+
+    public void handleFacebookAccessTokenSeller(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessTokenSeller:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(currentActivity, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            user = mAuth.getCurrentUser();
+                            updateUISeller();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(currentContext, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUISeller();
                         }
 
 
@@ -224,6 +278,136 @@ public class FirebaseControler {
                         updateUI(null);
                     }
                 });
+    }
+
+    public void addFirestoreSeller(final FirebaseUser u, Seller appSeller, String password){
+        Map<String, Object> userMap = null;
+
+        if(appSeller != null) {
+            userMap = appSeller.toMap();
+        }
+        else if(u != null){
+            Seller newSeller = new Seller(u.getUid(),"",  u.getEmail(), password, "", "", "");
+            userMap = newSeller.toMap();
+        }
+        else{
+            //ERROR
+            updateUISeller();
+            return;
+        }
+
+        final Map<String, Object> finalUserMap = userMap;
+
+        db.collection("sellers")
+                .document(u.getUid())
+                .set(finalUserMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        saveSellerToLocalDB(finalUserMap);
+
+                        Intent ShopInfoIntent = new Intent(currentContext.getApplicationContext(), ShopInfoActivity.class);
+                        currentContext.startActivity(ShopInfoIntent);
+
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + u.getUid());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                        registrationFailed();
+                    }
+                });
+    }
+
+    public void loadFirestoreUserById(final FirebaseUser u){
+
+        String uid = u.getUid();
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        saveUserToLocalDB(document.getData());
+
+                        Intent homeIntent = new Intent(currentContext.getApplicationContext(), HomeActivity.class);
+                        currentContext.startActivity(homeIntent);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                        addFirestoreUser(u, null, "");
+                        // TODO: 30.8.18.
+                        //Resiti sve mogucnosti
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void loadFirestoreSellerById(){
+
+        String uid = user.getUid();
+        DocumentReference docRef = db.collection("sellers").document(uid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        saveSellerToLocalDB(document.getData());
+
+                        Intent myShopIntent = new Intent(currentContext.getApplicationContext(), MyShopActivity.class);
+                        currentContext.startActivity(myShopIntent);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+
+                        Intent sellerInfoIntent = new Intent(currentContext.getApplicationContext(), SellerInfoActivity.class);
+                        currentContext.startActivity(sellerInfoIntent);
+
+                        // TODO: 30.8.18.
+                        //Resiti sve mogucnosti
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void saveUserToLocalDB(Map<String, Object> userData){
+        User user = new User(userData.get("uid").toString(),
+                userData.get("username").toString(),
+                userData.get("email").toString(),
+                userData.get("password").toString(),
+                userData.get("fbid").toString(),
+                userData.get("fullName").toString());
+        AppControler.getInstance().isSeller = false;
+        AppControler.getInstance().setCurrentUser(user);
+    }
+
+    public void saveSellerToLocalDB(Map<String, Object> userData){
+        Seller seller = new Seller(userData.get("uid").toString(),
+                userData.get("shopName").toString(),
+                userData.get("email").toString(),
+                userData.get("password").toString(),
+                userData.get("fbid").toString(),
+                userData.get("fullName").toString(),
+                userData.get("phoneNum").toString());
+        AppControler.getInstance().isSeller = true;
+        AppControler.getInstance().setCurrentSeller(seller);
     }
 
     public Boolean getRegistrationFailed() {

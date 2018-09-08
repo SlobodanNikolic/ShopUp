@@ -1,11 +1,13 @@
 package cobe.com.bejbikjum.controlers;
 
+import cobe.com.bejbikjum.models.Seller;
 import cobe.com.bejbikjum.models.User;
 
 public class AppControler {
 
     private static AppControler instance;
     private User currentUser;
+    private Seller currentSeller;
     public Boolean isSeller;
 
     public User getCurrentUser() {
@@ -15,6 +17,10 @@ public class AppControler {
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }
+    public void setCurrentSeller(Seller currentSeller) {
+        this.currentSeller = currentSeller;
+    }
+
 
     public Boolean getSeller() {
         return isSeller;
