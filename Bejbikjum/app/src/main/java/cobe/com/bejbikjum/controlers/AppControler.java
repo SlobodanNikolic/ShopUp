@@ -13,6 +13,12 @@ public class AppControler {
     public User getCurrentUser() {
         return currentUser;
     }
+    public Seller getCurrentSeller() {
+        if(currentSeller == null){
+            currentSeller = new Seller();
+        }
+        return currentSeller;
+    }
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;

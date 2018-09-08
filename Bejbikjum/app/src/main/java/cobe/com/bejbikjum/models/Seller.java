@@ -1,6 +1,9 @@
 package cobe.com.bejbikjum.models;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Seller {
@@ -12,6 +15,7 @@ public class Seller {
     private String fbid;
     private String fullName;
     private String phoneNum;
+    private ArrayList<String> itemTypes;
 
     public String getPhoneNum() {
         return phoneNum;
@@ -29,6 +33,29 @@ public class Seller {
         this.fbid = fbid;
         this.fullName = fullName;
         this.phoneNum = phoneNum;
+        this.itemTypes = new ArrayList<String>();
+    }
+
+    public Seller(String uid, String shopName, String email, String password, String fbid, String fullName, String phoneNum, String itemTypes) {
+        this.uid = uid;
+        this.shopName = shopName;
+        this.email = email;
+        this.password = password;
+        this.fbid = fbid;
+        this.fullName = fullName;
+        this.phoneNum = phoneNum;
+        this.itemTypes = new ArrayList<String>(Arrays.asList(itemTypes.split("\\s*,\\s*")));
+    }
+
+    public Seller(String uid, String shopName, String email, String password, String fbid, String fullName, String phoneNum, ArrayList<String> itemTypes) {
+        this.uid = uid;
+        this.shopName = shopName;
+        this.email = email;
+        this.password = password;
+        this.fbid = fbid;
+        this.fullName = fullName;
+        this.phoneNum = phoneNum;
+        this.itemTypes = itemTypes;
     }
 
     public Seller(){
@@ -39,6 +66,24 @@ public class Seller {
         this.fbid = "";
         this.fullName = "";
         this.phoneNum = "";
+        this.itemTypes = new ArrayList<String>();
+
+    }
+
+    public ArrayList<String> getItemTypes() {
+        return itemTypes;
+    }
+
+    public void setItemTypes(ArrayList<String> itemTypes) {
+        this.itemTypes = itemTypes;
+    }
+
+    public void addItemType(String itemTypeName){
+        itemTypes.add(itemTypeName);
+    }
+
+    public void removeItemType(String itemTypeName){
+        itemTypes.remove(itemTypeName);
     }
 
     public Map toMap(){
@@ -50,6 +95,7 @@ public class Seller {
         user.put("fbid", fbid);
         user.put("fullName", fullName);
         user.put("phoneNum", phoneNum);
+        user.put("itemTypes", itemTypes.toString());
 
         return user;
     }

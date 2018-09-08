@@ -69,6 +69,11 @@ public class FirebaseControler {
         this.user = user;
     }
 
+    public FirebaseUser getCurrentUser(){
+        return this.user;
+    }
+
+
     public void createAccount(final String email, final String password) {
 
         Log.d(TAG, "createAccount:" + email);
@@ -96,6 +101,42 @@ public class FirebaseControler {
                             updateUI(user);
                         }
 
+                        // [START_EXCLUDE]
+//                        hideProgressDialog();
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+
+    public void createSellerAccount(final String email, final String password) {
+
+        Log.d(TAG, "createAccount:" + email);
+
+//        showProgressDialog();
+
+        // [START create_user_with_email]
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(currentActivity, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createSellerWithEmail:success");
+                            user = mAuth.getCurrentUser();
+                            AppControler.getInstance().getCurrentSeller().setUid(user.getUid());
+                            sendEmailVerification();
+                            addFirestoreSeller(null, AppControler.getInstance().getCurrentSeller(), password);
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(currentContext, "Email registration failed", Toast.LENGTH_LONG);
+                            registrationFailed = true;
+                            user = null;
+                            updateUI(user);
+                        }
+
+                        // TODO: 8.9.18.
                         // [START_EXCLUDE]
 //                        hideProgressDialog();
                         // [END_EXCLUDE]
@@ -163,7 +204,7 @@ public class FirebaseControler {
         if (user != null) {
             // TODO: 27.8.18.
             //Ubaciti load podataka sa firestore-a
-            loadFirestoreSellerById();
+            loadFirestoreSellerById(user.getUid());
             Log.d(TAG, "User logged in");
 
 
@@ -282,13 +323,16 @@ public class FirebaseControler {
 
     public void addFirestoreSeller(final FirebaseUser u, Seller appSeller, String password){
         Map<String, Object> userMap = null;
+        String uid;
 
         if(appSeller != null) {
             userMap = appSeller.toMap();
+            uid = appSeller.getUid();
         }
         else if(u != null){
             Seller newSeller = new Seller(u.getUid(),"",  u.getEmail(), password, "", "", "");
             userMap = newSeller.toMap();
+            uid = u.getUid();
         }
         else{
             //ERROR
@@ -299,7 +343,7 @@ public class FirebaseControler {
         final Map<String, Object> finalUserMap = userMap;
 
         db.collection("sellers")
-                .document(u.getUid())
+                .document(uid)
                 .set(finalUserMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -307,10 +351,10 @@ public class FirebaseControler {
 
                         saveSellerToLocalDB(finalUserMap);
 
-                        Intent ShopInfoIntent = new Intent(currentContext.getApplicationContext(), ShopInfoActivity.class);
-                        currentContext.startActivity(ShopInfoIntent);
+                        Intent myShopIntent = new Intent(currentContext.getApplicationContext(), MyShopActivity.class);
+                        currentContext.startActivity(myShopIntent);
 
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + u.getUid());
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + finalUserMap.get("uid"));
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -353,9 +397,8 @@ public class FirebaseControler {
         });
     }
 
-    public void loadFirestoreSellerById(){
+    public void loadFirestoreSellerById(String uid){
 
-        String uid = user.getUid();
         DocumentReference docRef = db.collection("sellers").document(uid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -405,7 +448,8 @@ public class FirebaseControler {
                 userData.get("password").toString(),
                 userData.get("fbid").toString(),
                 userData.get("fullName").toString(),
-                userData.get("phoneNum").toString());
+                userData.get("phoneNum").toString(),
+                userData.get("itemTypes").toString());
         AppControler.getInstance().isSeller = true;
         AppControler.getInstance().setCurrentSeller(seller);
     }

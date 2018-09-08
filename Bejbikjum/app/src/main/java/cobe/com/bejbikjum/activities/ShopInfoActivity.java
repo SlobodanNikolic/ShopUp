@@ -6,11 +6,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+
+import com.facebook.CallbackManager;
+import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,12 +23,19 @@ import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.activities.HomeActivity;
 import cobe.com.bejbikjum.activities.MyShopActivity;
 import cobe.com.bejbikjum.adapters.ProductTypeAdapter;
+import cobe.com.bejbikjum.controlers.AppControler;
+import cobe.com.bejbikjum.controlers.FacebookControler;
+import cobe.com.bejbikjum.controlers.FirebaseControler;
+import cobe.com.bejbikjum.models.Seller;
 
 public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAdapter.ItemClickListener {
+
 
     ProductTypeAdapter adapter;
     @BindView(R.id.continue_button)
     Button continueButton;
+    @BindView(R.id.shop_name)
+    EditText shopNameInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +51,8 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
 
         setContentView(R.layout.activity_shop_info);
         ButterKnife.bind(this);
+
+        FirebaseControler.getInstance().setContext(this, this);
 
         String[] data = {"Women's shoes", "Men's shoes", "Sneakers", "Handbags", "Dresses", "Sports", "Men's jeans", "Women's jeans",
         "Men's suits", "Men's underwear", "Lingerie", "Skirts", "Men's hats", "Sunglasses", "Accessories"};
@@ -57,8 +71,22 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myShopIntent = new Intent(getApplicationContext(), MyShopActivity.class);
-                startActivity(myShopIntent);
+
+                if(validate()) {
+                    Seller currentSeller = AppControler.getInstance().getCurrentSeller();
+                    FirebaseUser currentUser = FirebaseControler.getInstance().getCurrentUser();
+
+                    if(currentUser != null){
+                        currentSeller = new Seller(currentUser.getUid(), shopNameInput.getText().toString(), currentUser.getEmail(), "",
+                                FacebookControler.getInstance().getToken().getUserId(), currentUser.getDisplayName(), "", currentSeller.getItemTypes());
+                        FirebaseControler.getInstance().addFirestoreSeller(null, currentSeller, "");
+                    }
+                    else{
+                        FirebaseControler.getInstance().createSellerAccount(currentSeller.getEmail(), currentSeller.getPassword());
+                    }
+//                    Intent myShopIntent = new Intent(getApplicationContext(), MyShopActivity.class);
+//                    startActivity(myShopIntent);
+                }
             }
         });
 
@@ -66,7 +94,23 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.i("ShopInfo", "You clicked number " + adapter.getItem(position) + ", which is at cell position " + position);
+        Log.d("ShopInfo", "You clicked number " + adapter.getItem(position) + ", which is at cell position " + position);
+        Log.d("ShopInfo", AppControler.getInstance().getCurrentSeller().getItemTypes().toString());
+    }
+
+
+    private boolean validate() {
+        boolean valid = true;
+
+        String shopName = shopNameInput.getText().toString();
+        if (TextUtils.isEmpty(shopName)) {
+            shopNameInput.setError("Required.");
+            valid = false;
+        } else {
+            shopNameInput.setError(null);
+        }
+
+        return valid;
     }
 
 

@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import cobe.com.bejbikjum.R;
+import cobe.com.bejbikjum.controlers.AppControler;
 
 public class ProductTypeAdapter extends RecyclerView.Adapter<ProductTypeAdapter.ViewHolder> {
 
@@ -52,17 +54,36 @@ public class ProductTypeAdapter extends RecyclerView.Adapter<ProductTypeAdapter.
 
         TextView productTypeName;
         ImageView productTypeIcon;
+        LinearLayout productLayout;
+        boolean selected;
 
         ViewHolder(View itemView) {
             super(itemView);
+            selected = false;
             productTypeName = (TextView) itemView.findViewById(R.id.product_type_name);
             productTypeIcon = (ImageView) itemView.findViewById(R.id.product_type_icon);
+            productLayout = (LinearLayout) itemView.findViewById(R.id.product_layout);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (clickListener != null) clickListener.onItemClick(view, getAdapterPosition());
+            if (clickListener != null){
+                clickListener.onItemClick(view, getAdapterPosition());
+                select();
+            }
+        }
+
+        public void select(){
+            selected = !selected;
+            if(selected){
+                productLayout.setBackgroundResource(R.drawable.square_border);
+                AppControler.getInstance().getCurrentSeller().addItemType(productTypeName.getText().toString());
+            }
+            else {
+                AppControler.getInstance().getCurrentSeller().removeItemType(productTypeName.getText().toString());
+                productLayout.setBackgroundResource(0);
+            }
         }
     }
 
