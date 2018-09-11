@@ -58,7 +58,8 @@
             android:label="@string/title_activity_take_photo" />
         <activity
             android:name=".activities.UploadPhotoActivity"
-            android:label="@string/title_activity_upload_photo" />
+            android:label="@string/title_activity_upload_photo"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".activities.TakePhotoLowActivity"
             android:label="@string/title_activity_take_photo_low" />
