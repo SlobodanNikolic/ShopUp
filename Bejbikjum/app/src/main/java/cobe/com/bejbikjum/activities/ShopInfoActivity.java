@@ -13,6 +13,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.facebook.CallbackManager;
 import com.google.firebase.auth.FirebaseUser;
@@ -89,7 +92,16 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onItemClick(View view, int position, LinearLayout productLayout, ImageView productTypeImage, TextView productTypeName, boolean selected) {
+        if(selected){
+            productLayout.setBackgroundResource(R.drawable.square_border);
+            AppControler.getInstance().getCurrentSeller().addItemType(productTypeName.getText().toString());
+        }
+        else {
+            AppControler.getInstance().getCurrentSeller().removeItemType(productTypeName.getText().toString());
+            productLayout.setBackgroundResource(0);
+        }
+
         Log.d("ShopInfo", "You clicked number " + adapter.getItem(position) + ", which is at cell position " + position);
         Log.d("ShopInfo", AppControler.getInstance().getCurrentSeller().getItemTypes().toString());
     }

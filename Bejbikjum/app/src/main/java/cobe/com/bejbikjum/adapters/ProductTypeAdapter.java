@@ -14,8 +14,8 @@ import cobe.com.bejbikjum.controlers.AppControler;
 
 public class ProductTypeAdapter extends RecyclerView.Adapter<ProductTypeAdapter.ViewHolder> {
 
-    private String[] data = new String[0];
-    private int[] iconIds = new int[0];
+    private String[] data;
+    private int[] iconIds;
     private LayoutInflater inflater;
     private ItemClickListener clickListener;
     Context context;
@@ -69,21 +69,15 @@ public class ProductTypeAdapter extends RecyclerView.Adapter<ProductTypeAdapter.
         @Override
         public void onClick(View view) {
             if (clickListener != null){
-                clickListener.onItemClick(view, getAdapterPosition());
                 select();
+                clickListener.onItemClick(view, getAdapterPosition(), productLayout, productTypeIcon, productTypeName, selected);
+
             }
         }
 
         public void select(){
             selected = !selected;
-            if(selected){
-                productLayout.setBackgroundResource(R.drawable.square_border);
-                AppControler.getInstance().getCurrentSeller().addItemType(productTypeName.getText().toString());
-            }
-            else {
-                AppControler.getInstance().getCurrentSeller().removeItemType(productTypeName.getText().toString());
-                productLayout.setBackgroundResource(0);
-            }
+
         }
     }
 
@@ -99,6 +93,6 @@ public class ProductTypeAdapter extends RecyclerView.Adapter<ProductTypeAdapter.
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(View view, int position, LinearLayout productLayout, ImageView productTypeIcon, TextView productTypeName, boolean selected);
     }
 }

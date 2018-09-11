@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.Console;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.adapters.ProductTypeAdapter;
 import cobe.com.bejbikjum.controlers.AppControler;
 import cobe.com.bejbikjum.controlers.FirebaseControler;
+import cobe.com.bejbikjum.models.Item;
 
 public class UploadPhotoActivity extends AppCompatActivity implements ProductTypeAdapter.ItemClickListener{
 
@@ -32,7 +35,7 @@ public class UploadPhotoActivity extends AppCompatActivity implements ProductTyp
     public static final int TAKE_PHOTO = 2;
     public int imageViewSelected = 0;
     ProductTypeAdapter adapter;
-
+    private Item currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,8 @@ public class UploadPhotoActivity extends AppCompatActivity implements ProductTyp
 
         setContentView(R.layout.activity_upload_photo);
         FirebaseControler.getInstance().setContext(this, this);
+
+        currentItem = new Item();
 
         imageViews[0]=(ImageView)findViewById(R.id.image1);
         imageViews[1]=(ImageView)findViewById(R.id.image2);
@@ -140,7 +145,14 @@ public class UploadPhotoActivity extends AppCompatActivity implements ProductTyp
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onItemClick(View view, int position, LinearLayout productLayout, ImageView productTypeImage, TextView productTypeName, boolean selected) {
+        if(selected){
+            productLayout.setBackgroundResource(R.drawable.square_border);
+        }
+        else {
+            productLayout.setBackgroundResource(0);
+        }
+
         Log.d("ShopInfo", "You clicked number " + adapter.getItem(position) + ", which is at cell position " + position);
         Log.d("ShopInfo", AppControler.getInstance().getCurrentSeller().getItemTypes().toString());
     }

@@ -16,6 +16,7 @@ public class Item {
     private String name;
     private String timestamp;
     private Material material;
+    private String materialString;
     private Size size;
     private String description;
     private float rating;
@@ -25,7 +26,7 @@ public class Item {
     private long id;
 
     public Item(String urlStandard, String name, String timestamp, Material material, Size size,
-                 String description, float rating, int timesRated, int likes, String[] comments, long id) {
+                 String description, float rating, int timesRated, int likes, String[] comments, long id, String materialString) {
         this.urlStandard = urlStandard;
         this.name = name;
         this.timestamp = timestamp;
@@ -37,6 +38,23 @@ public class Item {
         this.likes = likes;
         this.comments = comments;
         this.id = id;
+        this.materialString = materialString;
+    }
+
+    public String getMaterialString() {
+        return materialString;
+    }
+
+    public void setMaterialString(String materialString) {
+        this.materialString = materialString;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
     }
 
     public Item(){
