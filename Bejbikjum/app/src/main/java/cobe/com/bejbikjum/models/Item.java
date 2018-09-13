@@ -1,32 +1,93 @@
 package cobe.com.bejbikjum.models;
 
-enum Material
-{
-    SILK, COTTON, SUEDE, ACRYLIC;
-}
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
 
-enum Size{
-    XS, S, M, L, XL, XXL
-}
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import cobe.com.bejbikjum.helpers.StringListConverter;
+
+@Entity
 public class Item {
 
-    private String urlSmall;
     private String urlStandard;
+    @NonNull @PrimaryKey
     private String name;
     private String timestamp;
-    private Material material;
+    @TypeConverters(StringListConverter.class)
+    private StringList material;
     private String materialString;
-    private Size size;
+    @TypeConverters(StringListConverter.class)
+    private StringList size;
     private String description;
     private float rating;
     private int timesRated;
     private int likes;
-    private String[] comments;
-    private long id;
+    @TypeConverters(StringListConverter.class)
+    private StringList comments;
+    private String id;
+    private String colorString;
+    private String shopUid;
+    private String shopName;
+    private String price;
+    private String itemType;
 
-    public Item(String urlStandard, String name, String timestamp, Material material, Size size,
-                 String description, float rating, int timesRated, int likes, String[] comments, long id, String materialString) {
+    public String getColorString() {
+        return colorString;
+    }
+
+    public void setColorString(String colorString) {
+        this.colorString = colorString;
+    }
+
+    public String getUrlStandard() {
+        return urlStandard;
+    }
+
+    public void setUrlStandard(String urlStandard) {
+        this.urlStandard = urlStandard;
+    }
+
+    public String getShopUid() {
+        return shopUid;
+    }
+
+    public void setShopUid(String shopUid) {
+        this.shopUid = shopUid;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
+    public Item(String urlStandard, String name, String timestamp, StringList material, StringList size,
+                String description, float rating, int timesRated, int likes, StringList comments, String id, String materialString, String colorString,
+                String shopUid, String shopName, String price, String itemType) {
         this.urlStandard = urlStandard;
         this.name = name;
         this.timestamp = timestamp;
@@ -39,6 +100,33 @@ public class Item {
         this.comments = comments;
         this.id = id;
         this.materialString = materialString;
+        this.colorString = colorString;
+        this.shopUid = shopUid;
+        this.shopName = shopName;
+        this.price = price;
+        this.itemType = itemType;
+    }
+
+    public Map toMap(){
+        Map<String, Object> item = new HashMap<>();
+        item.put("urlStandard", urlStandard);
+        item.put("name", name);
+        item.put("timestamp", timestamp);
+        item.put("material", material.toString());
+        item.put("size", size.toString());
+        item.put("description", description);
+        item.put("rating", rating);
+        item.put("timesRated", timesRated);
+        item.put("likes", likes);
+        item.put("comments", comments);
+        item.put("id", id);
+        item.put("materialString", materialString);
+        item.put("colorString", colorString);
+        item.put("shopUid", shopUid);
+        item.put("shopName", shopName);
+        item.put("price", price);
+
+        return item;
     }
 
     public String getMaterialString() {
@@ -49,19 +137,21 @@ public class Item {
         this.materialString = materialString;
     }
 
-    public Size getSize() {
+    public StringList getSize() {
         return size;
     }
 
-    public void setSize(Size size) {
+    public void setSize(StringList size) {
         this.size = size;
     }
 
+    @Ignore
     public Item(){
 
     }
 
-    public Item(String urlStandard, String name, Material material, Size size) {
+    @Ignore
+    public Item(String urlStandard, String name, StringList material, StringList size) {
         this.urlStandard = urlStandard;
         this.name = name;
         this.material = material;
@@ -102,19 +192,19 @@ public class Item {
         this.likes = likes;
     }
 
-    public String[] getComments() {
+    public StringList getComments() {
         return comments;
     }
 
-    public void setComments(String[] comments) {
+    public void setComments(StringList comments) {
         this.comments = comments;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -126,9 +216,6 @@ public class Item {
         this.name = name;
     }
 
-    public void setSmall(String small) {
-        this.urlSmall = small;
-    }
 
     public void setMedium(String medium) {
         this.urlStandard = medium;
@@ -138,11 +225,11 @@ public class Item {
         this.timestamp = timestamp;
     }
 
-    public Material getMaterial() {
+    public StringList getMaterial() {
         return material;
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(StringList material) {
         this.material = material;
     }
 

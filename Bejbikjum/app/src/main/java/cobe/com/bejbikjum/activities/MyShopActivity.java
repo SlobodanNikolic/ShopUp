@@ -120,7 +120,7 @@ public class MyShopActivity extends AppCompatActivity {
                                 image.setName(object.getString("name"));
 
                                 JSONObject url = object.getJSONObject("url");
-                                image.setSmall(url.getString("small"));
+//                                image.setSmall(url.getString("small"));
                                 image.setMedium(url.getString("medium"));
                                 image.setTimestamp(object.getString("timestamp"));
 

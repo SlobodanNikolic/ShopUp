@@ -1,21 +1,32 @@
 package cobe.com.bejbikjum.models;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cobe.com.bejbikjum.helpers.StringListConverter;
+
+@Entity
 public class Seller {
 
-    private String uid;
+    @NonNull
+    @PrimaryKey private String uid;
     private String shopName;
     private String email;
     private String password;
     private String fbid;
     private String fullName;
     private String phoneNum;
-    private ArrayList<String> itemTypes;
+    @TypeConverters(StringListConverter.class)
+    private StringList itemTypes;
 
     public String getPhoneNum() {
         return phoneNum;
@@ -25,6 +36,7 @@ public class Seller {
         this.phoneNum = phoneNum;
     }
 
+    @Ignore
     public Seller(String uid, String shopName, String email, String password, String fbid, String fullName, String phoneNum) {
         this.uid = uid;
         this.shopName = shopName;
@@ -33,9 +45,10 @@ public class Seller {
         this.fbid = fbid;
         this.fullName = fullName;
         this.phoneNum = phoneNum;
-        this.itemTypes = new ArrayList<String>();
+        this.itemTypes = new StringList();
     }
 
+    @Ignore
     public Seller(String uid, String shopName, String email, String password, String fbid, String fullName, String phoneNum, String itemTypes) {
         this.uid = uid;
         this.shopName = shopName;
@@ -44,10 +57,11 @@ public class Seller {
         this.fbid = fbid;
         this.fullName = fullName;
         this.phoneNum = phoneNum;
-        this.itemTypes = new ArrayList<String>(Arrays.asList(itemTypes.split("\\s*,\\s*")));
+        this.itemTypes = new StringList(itemTypes);
     }
 
-    public Seller(String uid, String shopName, String email, String password, String fbid, String fullName, String phoneNum, ArrayList<String> itemTypes) {
+
+    public Seller(String uid, String shopName, String email, String password, String fbid, String fullName, String phoneNum, StringList itemTypes) {
         this.uid = uid;
         this.shopName = shopName;
         this.email = email;
@@ -58,6 +72,7 @@ public class Seller {
         this.itemTypes = itemTypes;
     }
 
+    @Ignore
     public Seller(){
         this.uid = "";
         this.shopName = "";
@@ -66,15 +81,15 @@ public class Seller {
         this.fbid = "";
         this.fullName = "";
         this.phoneNum = "";
-        this.itemTypes = new ArrayList<String>();
+        this.itemTypes = new StringList();
 
     }
 
-    public ArrayList<String> getItemTypes() {
+    public StringList getItemTypes() {
         return itemTypes;
     }
 
-    public void setItemTypes(ArrayList<String> itemTypes) {
+    public void setItemTypes(StringList itemTypes) {
         this.itemTypes = itemTypes;
     }
 

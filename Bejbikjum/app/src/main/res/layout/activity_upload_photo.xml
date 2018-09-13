@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -90,7 +98,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Item name"
@@ -150,8 +158,9 @@
             android:id="@+id/colors_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="Color"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/item_types_recycler" />
@@ -164,8 +173,9 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="Item type"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/item_description_input" />
@@ -187,54 +197,68 @@
 
             <ImageView
                 android:id="@+id/color1"
+                android:tag="white"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="#000000" />
+                android:clickable="true"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color2"
+                android:tag="red"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="#ffffff" />
+                android:clickable="true"
+                android:tint="@android:color/holo_red_dark"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color3"
+                android:tag="dark_brown"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="#e79c3c00" />
+                android:clickable="true"
+                android:tint="@color/dark_brown"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color4"
+                android:tag="light_brown"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:color/holo_blue_light" />
+                android:clickable="true"
+                android:tint="@color/light_brown"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color5"
+                android:tag="orange"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:color/holo_blue_light" />
+                android:clickable="true"
+                android:tint="@android:color/holo_orange_dark"
+                app:srcCompat="@drawable/color_circle" />
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/item_types_recycler"
             android:layout_width="350dp"
-            android:layout_height="207dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
@@ -262,48 +286,63 @@
 
             <ImageView
                 android:id="@+id/color6"
+                android:tag="yellow"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:color/holo_blue_light" />
+                android:clickable="true"
+                android:tint="@color/yellow"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color7"
+                android:tag="green"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:color/holo_blue_light" />
+                android:clickable="true"
+                android:tint="@android:color/holo_green_dark"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color8"
+                android:tag="blue"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:color/holo_blue_light" />
+                android:clickable="true"
+                android:tint="@color/colorPrimary"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color9"
+                android:tag="pink"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:color/holo_blue_light" />
+                android:clickable="true"
+                android:tint="@color/pink"
+                app:srcCompat="@drawable/color_circle" />
 
             <ImageView
                 android:id="@+id/color10"
+                android:tag="black"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:color/holo_blue_light" />
+                android:clickable="true"
+                android:tint="@android:color/black"
+                app:srcCompat="@drawable/color_circle" />
 
         </LinearLayout>
 
@@ -325,6 +364,37 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/colors_layout2" />
 
+
+
     </android.support.constraint.ConstraintLayout>
 
+
+
 </ScrollView>
+
+<LinearLayout
+    android:id="@+id/progress_layout_upload"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:text="Please wait until the registration is complete. This will only take a second."
+        android:textSize="14sp" />
+</LinearLayout>
+
+
+</RelativeLayout>

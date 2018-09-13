@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -32,6 +34,7 @@ import cobe.com.bejbikjum.activities.MyShopActivity;
 import cobe.com.bejbikjum.activities.RegisterActivity;
 import cobe.com.bejbikjum.activities.SellerInfoActivity;
 import cobe.com.bejbikjum.activities.ShopInfoActivity;
+import cobe.com.bejbikjum.models.Item;
 import cobe.com.bejbikjum.models.Seller;
 import cobe.com.bejbikjum.models.User;
 
@@ -40,6 +43,23 @@ public class FirebaseControler {
 
     //current Context
     private Context currentContext;
+
+    public Context getCurrentContext() {
+        return currentContext;
+    }
+
+    public void setCurrentContext(Context currentContext) {
+        this.currentContext = currentContext;
+    }
+
+    public Activity getCurrentActivity() {
+        return currentActivity;
+    }
+
+    public void setCurrentActivity(Activity currentActivity) {
+        this.currentActivity = currentActivity;
+    }
+
     private Activity currentActivity;
     private Boolean registrationFailed;
 
@@ -366,6 +386,7 @@ public class FirebaseControler {
                 });
     }
 
+
     public void loadFirestoreUserById(final FirebaseUser u){
 
         final String uid = u.getUid();
@@ -460,5 +481,45 @@ public class FirebaseControler {
 
     public void setRegistrationFailed(Boolean registrationFailed) {
         this.registrationFailed = registrationFailed;
+    }
+
+
+    public void addItem(final Item item){
+        String uid;
+
+        final Map<String, Object> finalItemMap = item.toMap();
+
+        db.collection("sellers/" + item.getShopUid() + "/items/" + item.getItemType() + "/")
+                .document(item.getName())
+                .set(finalItemMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // TODO: 12.9.18. Add item to local database 
+//                        saveSellerToLocalDB(finalUserMap);
+                        LocalDBControler.getInstance().saveItem(item);
+                        
+                        Intent myShopIntent = new Intent(currentContext.getApplicationContext(), MyShopActivity.class);
+                        currentContext.startActivity(myShopIntent);
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // TODO: 13.9.18. Odraditi odgovarajucu akciju
+                        Log.w(TAG, "Error adding document", e);
+                        registrationFailed();
+                    }
+                });
+    }
+
+
+    public void showProgressBar(LinearLayout progressLayout){
+        progressLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar(LinearLayout progressLayout){
+        progressLayout.setVisibility(View.INVISIBLE);
     }
 }
