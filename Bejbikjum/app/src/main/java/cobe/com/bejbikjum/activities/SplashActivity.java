@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.net.InetAddress;
@@ -15,6 +16,7 @@ import java.util.TimerTask;
 
 import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.controlers.FirebaseControler;
+import cobe.com.bejbikjum.controlers.LocalDBControler;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -39,6 +41,8 @@ public class SplashActivity extends AppCompatActivity {
               }
           },0, 10*1000);
 
+        Log.d("SplashActivity", "Getting all items");
+        LocalDBControler.getInstance().getAllItems();
     }
 
     protected boolean isOnline() {

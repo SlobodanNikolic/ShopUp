@@ -1,6 +1,9 @@
 package cobe.com.bejbikjum.controlers;
 
+import java.util.List;
+
 import cobe.com.bejbikjum.R;
+import cobe.com.bejbikjum.models.Item;
 import cobe.com.bejbikjum.models.Seller;
 import cobe.com.bejbikjum.models.User;
 
@@ -10,7 +13,15 @@ public class AppControler {
     private User currentUser;
     private Seller currentSeller;
     public Boolean isSeller;
+    private List<Item> shopItems;
 
+    public List<Item> getShopItems() {
+        return shopItems;
+    }
+
+    public void setShopItems(List<Item> shopItems) {
+        this.shopItems = shopItems;
+    }
 
     private String[] data = {"Women's shoes", "Men's shoes", "Sneakers", "Handbags", "Dresses", "Sports", "Men's jeans", "Women's jeans",
             "Men's suits", "Men's underwear", "Lingerie", "Skirts", "Men's hats", "Sunglasses", "Accessories"};

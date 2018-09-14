@@ -83,6 +83,7 @@ public class StorageControler {
 
         String uid = FirebaseControler.getInstance().getCurrentUser().getUid();
 
+        progressCounter = 0;
         for(int i = 0; i<imageData.length; i++){
             if(imageData[i]!=null)
                 progressCounter++;
@@ -90,6 +91,7 @@ public class StorageControler {
 
         if(imageData != null)
         {
+            Log.d(TAG, ""+progressCounter);
             uriList = new ArrayList<String>();
 
             showProgressBar(progressLayout);
@@ -145,10 +147,9 @@ public class StorageControler {
                                 uriList.add(downloadUri.toString());
 
                                 Log.d(TAG, "Upload complete, URI: " + downloadUri.toString());
-                                Log.d(TAG, "Progress counter: " + --progressCounter);
+                                progressCounter--;
 
-
-                                if(--progressCounter == 0) {
+                                if(progressCounter == 0) {
                                     item.setUrlStandard(uriList.toString());
                                     FirebaseControler.getInstance().addItem(item);
 

@@ -23,7 +23,7 @@ public interface ItemDAO {
 
     // Gets all people in the database
     @Query("SELECT * FROM item")
-    List<Item> getAllPeople();
+    List<Item> getAllItems();
 
     // Gets all people in the database with a favorite color
     @Query("SELECT * FROM item WHERE name LIKE :itemName")

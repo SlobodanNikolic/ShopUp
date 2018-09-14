@@ -113,6 +113,8 @@ public class UploadPhotoActivity extends AppCompatActivity implements ProductTyp
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    removeAllColorBorders();
+                    view.setBackgroundResource(R.drawable.square_border);
                     currentItem.setColorString(view.getTag().toString());
                 }
             });
@@ -174,6 +176,11 @@ public class UploadPhotoActivity extends AppCompatActivity implements ProductTyp
         progressLayout.setVisibility(View.INVISIBLE);
     }
 
+    public void removeAllColorBorders(){
+        for(ImageView image : colorViews){
+            image.setBackgroundResource(0);
+        }
+    }
 
     public boolean validate(){
 

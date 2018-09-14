@@ -112,8 +112,17 @@ public class Item {
         item.put("urlStandard", urlStandard);
         item.put("name", name);
         item.put("timestamp", timestamp);
-        item.put("material", material.toString());
-        item.put("size", size.toString());
+
+        if(material != null)
+            item.put("material", material.toString());
+        else
+            item.put("material", "");
+
+        if(size!=null)
+            item.put("size", size.toString());
+        else
+            item.put("size", "");
+
         item.put("description", description);
         item.put("rating", rating);
         item.put("timesRated", timesRated);
@@ -241,5 +250,24 @@ public class Item {
         return timestamp;
     }
 
-
+    @Override
+    public String toString(){
+        return "Item: " + urlStandard+", " +
+         name+", " +
+         timestamp+", " +
+         material+", " +
+         materialString+", " +
+         size+", " +
+         description+", " +
+         rating+", " +
+         timesRated+", " +
+         likes+", " +
+         comments+", " +
+         id+", " +
+         colorString+", " +
+         shopUid+", " +
+         shopName+", " +
+         price+", " +
+         itemType;
+    }
 }

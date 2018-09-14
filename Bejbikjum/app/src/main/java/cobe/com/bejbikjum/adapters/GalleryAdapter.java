@@ -3,6 +3,7 @@ package cobe.com.bejbikjum.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,8 +16,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import cobe.com.bejbikjum.DAO.LocalDB;
 import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.models.Item;
 
@@ -55,6 +59,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public GalleryAdapter(Context context, List<Item> images) {
         mContext = context;
         this.images = images;
+        Log.d("Gallery", "Creating gallery adapter");
     }
 
     @Override
@@ -68,6 +73,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+        Log.d("GalleryAdapter", "ViewHolder created");
         if(viewType == 0) {
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.gallery_thumbnail, parent, false);
@@ -89,18 +95,21 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             int positionWithAds = position - (position/12 +1);
             Item image = images.get(positionWithAds);
+            List<String> imageUris = Arrays.asList(image.getStandard().split("\\s*,\\s*"));
 
+            Log.d("GalleryAdapter", imageUris.get(0).substring(1, imageUris.get(0).length()-1));
             MyViewHolder imageHolder = (MyViewHolder) holder;
 
-            RequestOptions myOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
-            Glide.with(mContext).load(image.getStandard())
+            RequestOptions myOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .timeout(10000).placeholder(R.drawable.handbag);
+            Glide.with(mContext).load(imageUris.get(0).substring(1, imageUris.get(0).length()-1))
                     .thumbnail(0.5f)
                     .transition(withCrossFade())
                     .apply(myOptions)
                     .into(imageHolder.thumbnail);
         }
         else{
-
+            Log.d("GalleryAdapter", "View type AD");
         }
     }
 

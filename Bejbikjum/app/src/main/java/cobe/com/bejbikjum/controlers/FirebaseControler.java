@@ -489,7 +489,7 @@ public class FirebaseControler {
 
         final Map<String, Object> finalItemMap = item.toMap();
 
-        db.collection("sellers/" + item.getShopUid() + "/items/" + item.getItemType() + "/")
+        db.collection("sellers/" + item.getShopUid() + "/items/")
                 .document(item.getName())
                 .set(finalItemMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

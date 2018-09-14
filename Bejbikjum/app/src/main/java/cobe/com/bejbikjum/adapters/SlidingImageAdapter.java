@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import java.util.ArrayList;
 
 import cobe.com.bejbikjum.R;
+import cobe.com.bejbikjum.models.Item;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -22,6 +23,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 public class SlidingImageAdapter extends PagerAdapter {
 
     private ArrayList<String> images;
+    private Item clikedItem;
     private LayoutInflater inflater;
     private Context context;
 
