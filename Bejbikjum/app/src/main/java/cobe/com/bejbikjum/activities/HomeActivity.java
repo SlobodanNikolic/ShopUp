@@ -88,6 +88,11 @@ public class HomeActivity extends AppCompatActivity {
         fetchImages();
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
     private void fetchImages() {
 
         pDialog.setMessage("Downloading...");

@@ -205,19 +205,19 @@ public class FirebaseControler {
             loadFirestoreUserById(u);
             Log.d(TAG, "User logged in");
 
-
-
-//            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
-//                    user.getEmail(), user.isEmailVerified()));
-//            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
-
         } else {
             registrationFailed = true;
             Log.d(TAG, "User not logged in");
             Intent registerIntent = new Intent(currentContext.getApplicationContext(), RegisterActivity.class);
             currentContext.startActivity(registerIntent);
         }
+    }
+
+    private void goToHomeScreen(Map<String, Object> document){
+        saveUserToLocalDB(document);
+
+        Intent homeIntent = new Intent(currentContext.getApplicationContext(), HomeActivity.class);
+        currentContext.startActivity(homeIntent);
     }
 
     private void updateUISeller(){
@@ -322,13 +322,15 @@ public class FirebaseControler {
             return;
         }
 
+        final Map<String, Object> finalUserMap = userMap;
+
         db.collection("users")
                 .document(u.getUid())
                 .set(userMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        updateUI(u);
+                        goToHomeScreen(finalUserMap);
                         Log.d(TAG, "DocumentSnapshot added with ID: " + u.getUid());
                     }
                 })
@@ -407,9 +409,32 @@ public class FirebaseControler {
 
                     } else {
                         Log.d(TAG, "No such document");
-                        loadFirestoreSellerById(uid);
+                        checkForSellerOnFirestore(u);
                         // TODO: 30.8.18.
                         //Resiti sve mogucnosti
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void checkForSellerOnFirestore(final FirebaseUser user){
+        DocumentReference docRef = db.collection("sellers").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document.exists()) {
+                        // TODO: 17.9.18. A seller account with this email adress is already active
+                        //Would you like to log in?
+
+                    } else {
+                        addFirestoreUser(user, null, "");
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());

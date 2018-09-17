@@ -7,6 +7,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -19,13 +21,26 @@ import butterknife.ButterKnife;
 import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.adapters.SlidingImageAdapter;
 import cobe.com.bejbikjum.helpers.MyGlideApp;
+import cobe.com.bejbikjum.models.Item;
 
 public class ImageDetailsActivity extends AppCompatActivity {
 
     @BindView(R.id.image_view_pager)
     ViewPager imagePager;
+    private Item item;
 
-    private String imageUrl;
+    String imageUrl;
+    @BindView(R.id.product_name)
+    TextView nameTextView;
+    @BindView(R.id.product_price)
+    TextView priceTextView;
+    @BindView(R.id.materials)
+    TextView materialsTextView;
+    @BindView(R.id.sizes)
+    TextView sizesTextView;
+    @BindView(R.id.details_content)
+    TextView detailsTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +57,16 @@ public class ImageDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_details);
         ButterKnife.bind(this);
 
+        Bundle data = getIntent().getExtras();
+        Item item = (Item) data.getParcelable("item");
+
+        nameTextView.setText(item.getName());
+        priceTextView.setText(item.getPrice());
+        materialsTextView.setText(item.getMaterialString());
+        detailsTextView.setText(item.getDescription());
+
         ArrayList<String> images = getIntent().getStringArrayListExtra("items");
-        imagePager.setAdapter(new SlidingImageAdapter(ImageDetailsActivity.this, images));
+        imagePager.setAdapter(new SlidingImageAdapter(ImageDetailsActivity.this, item));
 
     }
 

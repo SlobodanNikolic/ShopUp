@@ -79,16 +79,8 @@ public class MyShopActivity extends AppCompatActivity {
             public void onClick(View view, int position) {
                 int positionWithAds = position - (position/12 +1);
 
-                ArrayList<String> itemUrls = new ArrayList<String>();
-                itemUrls.add(items.get(0).getStandard());
-                itemUrls.add(items.get(1).getStandard());
-                itemUrls.add(items.get(2).getStandard());
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("items", itemUrls);
-
                 Intent imageDetailsIntent = new Intent(getApplicationContext(), ImageDetailsActivity.class);
-                imageDetailsIntent.putExtras(bundle);
+                imageDetailsIntent.putExtra("item", items.get(positionWithAds));
                 startActivity(imageDetailsIntent);
             }
 
@@ -99,6 +91,11 @@ public class MyShopActivity extends AppCompatActivity {
         }));
 
         fetchImages();
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 
     private void fetchImages() {
@@ -112,8 +109,10 @@ public class MyShopActivity extends AppCompatActivity {
             Log.d("MyShopActivity", "LocalDB has shop items");
             ArrayList<Item> itemsHelperList = new ArrayList<Item>(LocalDBControler.getInstance().getShopItems());
 
-            for(Item item : itemsHelperList)
+            for(Item item : itemsHelperList) {
+                Log.d(TAG, item.toString());
                 items.add(item);
+            }
             mAdapter.notifyDataSetChanged();
             pDialog.hide();
         }

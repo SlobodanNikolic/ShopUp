@@ -95,14 +95,14 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             int positionWithAds = position - (position/12 +1);
             Item image = images.get(positionWithAds);
-            List<String> imageUris = Arrays.asList(image.getStandard().split("\\s*,\\s*"));
+            List<String> imageUris = Arrays.asList(image.getStandard().replace("[","").replace("]", "").split("\\s*,\\s*"));
 
-            Log.d("GalleryAdapter", imageUris.get(0).substring(1, imageUris.get(0).length()-1));
+            Log.d("GalleryAdapter", imageUris.get(0));
             MyViewHolder imageHolder = (MyViewHolder) holder;
 
             RequestOptions myOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
                     .timeout(10000).placeholder(R.drawable.handbag);
-            Glide.with(mContext).load(imageUris.get(0).substring(1, imageUris.get(0).length()-1))
+            Glide.with(mContext).load(imageUris.get(0))
                     .thumbnail(0.5f)
                     .transition(withCrossFade())
                     .apply(myOptions)

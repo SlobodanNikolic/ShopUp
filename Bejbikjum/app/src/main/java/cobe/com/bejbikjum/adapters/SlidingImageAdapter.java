@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.models.Item;
@@ -22,15 +23,20 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 public class SlidingImageAdapter extends PagerAdapter {
 
-    private ArrayList<String> images;
-    private Item clikedItem;
+    private Item clickedItem;
     private LayoutInflater inflater;
     private Context context;
+    private ArrayList<String> imageUrls;
 
 
-    public SlidingImageAdapter(Context context,ArrayList<String> images) {
+    public SlidingImageAdapter(Context context,Item clickedItem) {
         this.context = context;
-        this.images = images;
+        this.clickedItem = clickedItem;
+        imageUrls = new ArrayList<String>();
+        ArrayList<String> urls = new ArrayList<String>(Arrays.asList(clickedItem.getStandard().replace("[", "").replace("]","").split("\\s*,\\s*")));
+        for (String url : urls){
+            imageUrls.add(url);
+        }
         inflater = LayoutInflater.from(context);
     }
 
@@ -41,7 +47,8 @@ public class SlidingImageAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return images.size();
+        ArrayList<String> urls = new ArrayList<String>(Arrays.asList(clickedItem.getStandard().split(",")));
+        return urls.size();
     }
 
     @Override
@@ -54,7 +61,7 @@ public class SlidingImageAdapter extends PagerAdapter {
 
 
         RequestOptions myOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(context).load(images.get(position))
+        Glide.with(context).load(imageUrls.get(position))
                 .thumbnail(0.5f)
                 .transition(withCrossFade())
                 .apply(myOptions)
@@ -72,6 +79,7 @@ public class SlidingImageAdapter extends PagerAdapter {
 
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
+
     }
 
     @Override

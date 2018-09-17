@@ -4,8 +4,11 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +16,7 @@ import java.util.Map;
 import cobe.com.bejbikjum.helpers.StringListConverter;
 
 @Entity
-public class Item {
+public class Item implements Parcelable {
 
     private String urlStandard;
     @NonNull @PrimaryKey
@@ -36,6 +39,17 @@ public class Item {
     private String shopName;
     private String price;
     private String itemType;
+
+    @Override
+    public void writeToParcel(Parcel dest, int i) {
+        dest.writeStringArray(new String[] {this.urlStandard,
+                this.name,
+                this.timestamp,
+                this.materialString,
+                this.description, ""+this.rating, ""+this.timesRated, ""+this.likes, this.id,
+                this.colorString, this.shopUid, this.shopName, this.price, this.itemType
+        });
+    }
 
     public String getColorString() {
         return colorString;
@@ -270,4 +284,44 @@ public class Item {
          price+", " +
          itemType;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public Item(Parcel in){
+        String[] data = new String[14];
+
+        in.readStringArray(data);
+        // the order needs to be the same as in writeToParcel() method
+        urlStandard = data[0];
+        name = data[1];
+        timestamp = data[2];
+        materialString = data[3];
+        description = data[4];
+        rating = Float.parseFloat(data[5]);
+        timesRated = Integer.parseInt(data[6]);
+        likes = Integer.parseInt(data[7]);
+        id = data[8];
+        colorString = data[9];
+        shopUid = data[10];
+        shopName = data[11];
+        price = data[12];
+        itemType = data[13];
+        material = new StringList();
+        size = new StringList();
+        comments = new StringList();
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
+
 }
