@@ -24,7 +24,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -76,7 +79,12 @@ public class FirebaseControler {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         registrationFailed = false;
+        resetTopRatedListener();
     };
+
+    public void resetTopRatedListener(){
+        this.listener = null;
+    }
 
     public static FirebaseControler getInstance(){
         if(instance == null){
@@ -514,8 +522,8 @@ public class FirebaseControler {
 
         final Map<String, Object> finalItemMap = item.toMap();
 
-        db.collection("sellers/" + item.getShopUid() + "/items/")
-                .document(item.getName())
+        db.collection("items/")
+                .document()
                 .set(finalItemMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -547,4 +555,64 @@ public class FirebaseControler {
     public void hideProgressBar(LinearLayout progressLayout){
         progressLayout.setVisibility(View.INVISIBLE);
     }
+
+    public void getAdvertized(){
+
+    }
+
+    public void getTopRated(){
+        db.collection("top_rated")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            AppControler.getInstance().clearTopRated();
+                            ArrayList<Item> helperList = null;
+
+                            if(!task.getResult().isEmpty()) {
+                                helperList = new ArrayList<Item>();
+
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Item helperItem = new Item();
+                                    helperList.add(helperItem.parseMap(document.getData()));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+
+                                AppControler.getInstance().setTopRatedItems(helperList);
+                            }
+
+                            if(listener!=null){
+                                listener.onTopRated(helperList);
+                            }
+
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            if(listener!=null)
+                                listener.onTopRatedFailed();
+                        }
+                    }
+                });
+    }
+
+    public interface TopRatedListener {
+        // These methods are the different events and
+        // need to pass relevant arguments related to the event triggered
+        // or when data has been loaded
+        public void onTopRated(ArrayList<Item> topRatedItems);
+        public void onTopRatedFailed();
+    }
+
+    // Step 2 - This variable represents the listener passed in by the owning object
+    // The listener must implement the events interface and passes messages up to the parent.
+    private TopRatedListener listener;
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setTopRatedListener(TopRatedListener listener) {
+        this.listener = listener;
+    }
+
+
 }

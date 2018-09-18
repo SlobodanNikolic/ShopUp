@@ -51,6 +51,25 @@ public class Item implements Parcelable {
         });
     }
 
+    public Item parseMap(Map<String, Object> map){
+
+        urlStandard = map.get("urlStandard").toString();
+        name= map.get("name").toString();
+        timestamp= map.get("timestamp").toString();
+        materialString = map.get("materialString").toString();
+        description = map.get("description").toString();
+        timesRated = ((Long)map.get("timesRated")).intValue();
+        likes = ((Long)map.get("likes")).intValue();
+        id = map.get("id").toString();
+        colorString = map.get("colorString").toString();
+        shopUid = map.get("shopUid").toString();
+        shopName = map.get("shopName").toString();
+        price = map.get("price").toString();
+        itemType = map.get("itemType").toString();
+
+        return this;
+    }
+
     public String getColorString() {
         return colorString;
     }

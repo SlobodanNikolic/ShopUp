@@ -1,5 +1,6 @@
 package cobe.com.bejbikjum.controlers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cobe.com.bejbikjum.R;
@@ -14,6 +15,8 @@ public class AppControler {
     private Seller currentSeller;
     public Boolean isSeller;
     private List<Item> shopItems;
+
+    private ArrayList<Item> topRatedItems;
 
     public List<Item> getShopItems() {
         return shopItems;
@@ -32,6 +35,7 @@ public class AppControler {
     public User getCurrentUser() {
         return currentUser;
     }
+
     public Seller getCurrentSeller() {
         if(currentSeller == null){
             currentSeller = new Seller();
@@ -74,14 +78,31 @@ public class AppControler {
     private AppControler(){
         isSeller = false;
         currentUser = new User();
-
+        topRatedItems = new ArrayList<Item>();
     };
+
+    public void clearTopRated(){
+        topRatedItems.clear();
+    }
+
+    public void addToTopRated(Item item){
+        topRatedItems.add(item);
+    }
 
     public static AppControler getInstance(){
         if(instance == null){
             instance = new AppControler();
         }
         return instance;
+    }
+
+
+    public ArrayList<Item> getTopRatedItems() {
+        return topRatedItems;
+    }
+
+    public void setTopRatedItems(ArrayList<Item> topRatedItems) {
+        this.topRatedItems = topRatedItems;
     }
 
 }
