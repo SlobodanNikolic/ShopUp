@@ -21,7 +21,7 @@ public class Item implements Parcelable {
     private String urlStandard;
     @NonNull @PrimaryKey
     private String name;
-    private String timestamp;
+    private long timestamp;
     @TypeConverters(StringListConverter.class)
     private StringList material;
     private String materialString;
@@ -44,7 +44,7 @@ public class Item implements Parcelable {
     public void writeToParcel(Parcel dest, int i) {
         dest.writeStringArray(new String[] {this.urlStandard,
                 this.name,
-                this.timestamp,
+                this.timestamp+"",
                 this.materialString,
                 this.description, ""+this.rating, ""+this.timesRated, ""+this.likes, this.id,
                 this.colorString, this.shopUid, this.shopName, this.price, this.itemType
@@ -55,7 +55,7 @@ public class Item implements Parcelable {
 
         urlStandard = map.get("urlStandard").toString();
         name= map.get("name").toString();
-        timestamp= map.get("timestamp").toString();
+        timestamp= (Long)map.get("timestamp");
         materialString = map.get("materialString").toString();
         description = map.get("description").toString();
         timesRated = ((Long)map.get("timesRated")).intValue();
@@ -118,7 +118,7 @@ public class Item implements Parcelable {
         this.itemType = itemType;
     }
 
-    public Item(String urlStandard, String name, String timestamp, StringList material, StringList size,
+    public Item(String urlStandard, String name, Long timestamp, StringList material, StringList size,
                 String description, float rating, int timesRated, int likes, StringList comments, String id, String materialString, String colorString,
                 String shopUid, String shopName, String price, String itemType) {
         this.urlStandard = urlStandard;
@@ -264,7 +264,7 @@ public class Item implements Parcelable {
         this.urlStandard = medium;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -280,7 +280,7 @@ public class Item implements Parcelable {
         return name;
     }
 
-    public String getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
@@ -317,7 +317,7 @@ public class Item implements Parcelable {
         // the order needs to be the same as in writeToParcel() method
         urlStandard = data[0];
         name = data[1];
-        timestamp = data[2];
+        timestamp = Long.parseLong(data[2]);
         materialString = data[3];
         description = data[4];
         rating = Float.parseFloat(data[5]);

@@ -12,16 +12,19 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.firebase.Timestamp;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.adapters.GalleryAdapter;
@@ -38,6 +41,12 @@ public class HomeActivity extends AppCompatActivity {
     private ProgressDialog pDialog;
     private GalleryAdapter mAdapter;
     private RecyclerView recyclerView;
+    private Button topRatedButton;
+    private Button hotButton;
+    private Button editorsChoiceButton;
+    private Button featuredButton;
+    private Button randomButton;
+    private Button newButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,38 +88,35 @@ public class HomeActivity extends AppCompatActivity {
             }
         }));
 
-        FirebaseControler.getInstance().setDownloadListener(new FirebaseControler.DownloadListener() {
-            @Override
-            public void onTopRated(ArrayList<Item> topRatedItems) {
-                if(topRatedItems!=null) {
-                    Log.d(TAG, "Top rated items ready: " + topRatedItems.size());
-                    items.clear();
+        setListeners();
 
-                    for(Item item : topRatedItems)
-                        items.add(item);
-
-                    mAdapter.notifyDataSetChanged();
-                }
-                else {
-                    Log.d(TAG, "No top rated items");
-                }
-            }
-
-            @Override
-            public void onTopRatedFailed(){
-                Log.d(TAG, "Error getting top rated items");
-            }
-
-        });
-
-        getTopRated();
-    }
-
-    private void getTopRated(){
-        items.clear();
         FirebaseControler.getInstance().getTopRated();
 
+        topRatedButton = (Button) findViewById(R.id.top_rated_button);
+        hotButton = (Button)findViewById(R.id.hot_button);
+        editorsChoiceButton = (Button)findViewById(R.id.editors_choice_button);
+        featuredButton = (Button)findViewById(R.id.featured_button);
+        randomButton = (Button)findViewById(R.id.random_button);
+        newButton = (Button)findViewById(R.id.new_button);
+
+        topRatedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseControler.getInstance().getTopRated();
+            }
+        });
+
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG,"New button clicked");
+                FirebaseControler.getInstance().setLastVisibleNew(null);
+                FirebaseControler.getInstance().getNewItems();
+            }
+        });
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -153,7 +159,7 @@ public class HomeActivity extends AppCompatActivity {
                                     JSONObject url = object.getJSONObject("url");
 //                                image.setSmall(url.getString("small"));
                                     image.setMedium(url.getString("medium"));
-                                    image.setTimestamp(object.getString("timestamp"));
+//                                    image.setTimestamp(object.getString("timestamp"));
 
                                     items.add(image);
 
@@ -174,6 +180,91 @@ public class HomeActivity extends AppCompatActivity {
             // Adding request to request queue
             AppController.getInstance().addToRequestQueue(req);
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        // put your code here...
+        setListeners();
+    }
+
+    public void setListeners(){
+        FirebaseControler.getInstance().setDownloadListener(new FirebaseControler.DownloadListener() {
+            @Override
+            public void onTopRated(ArrayList<Item> topRatedItems) {
+                if(topRatedItems!=null) {
+                    Log.d(TAG, "Top rated items ready: " + topRatedItems.size());
+                    items.clear();
+
+                    for(Item item : topRatedItems)
+                        items.add(item);
+
+                    mAdapter.notifyDataSetChanged();
+                }
+                else {
+                    Log.d(TAG, "No top rated items");
+                }
+            }
+
+            @Override
+            public void onTopRatedFailed(){
+                Log.d(TAG, "Error getting top rated items");
+            }
+
+            @Override
+            public void onNewItems(ArrayList<Item> newItems) {
+                if(newItems!=null) {
+                    Log.d(TAG, "New items ready: " + newItems.size());
+                    items.clear();
+
+                    for(Item item : newItems)
+                        items.add(item);
+
+                    mAdapter.notifyDataSetChanged();
+                }
+                else {
+                    Log.d(TAG, "No new items");
+                }
+            }
+
+            @Override
+            public void onNewItemsFailed(){
+                Log.d(TAG, "Error getting new items");
+            }
+
+            @Override
+            public void onItemLiked() {
+
+            }
+
+            @Override
+            public void onItemLikeFailed() {
+
+            }
+
+            @Override
+            public void onRandomItems(ArrayList<Item> randomItems) {
+                if(randomItems!=null) {
+                    Log.d(TAG, "Random items ready: " + randomItems.size());
+                    items.clear();
+
+                    for(Item item : randomItems)
+                        items.add(item);
+
+                    mAdapter.notifyDataSetChanged();
+                }
+                else {
+                    Log.d(TAG, "No random items");
+                }
+            }
+
+            @Override
+            public void onRandomItemsFailed() {
+
+            }
+
+        });
     }
 
 }

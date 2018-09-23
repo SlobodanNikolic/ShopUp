@@ -59,7 +59,7 @@
         <activity
             android:name=".activities.UploadPhotoActivity"
             android:label="@string/title_activity_upload_photo"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".activities.TakePhotoLowActivity"
             android:label="@string/title_activity_take_photo_low" />
@@ -93,7 +93,10 @@
 
         <activity
             android:name=".activities.PasswordActivity"
-            android:label="@string/title_activity_password"></activity>
+            android:label="@string/title_activity_password" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="@string/title_activity_login"></activity>
     </application>
 
 </manifest>

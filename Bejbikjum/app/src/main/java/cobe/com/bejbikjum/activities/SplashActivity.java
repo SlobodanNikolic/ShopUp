@@ -42,7 +42,9 @@ public class SplashActivity extends AppCompatActivity {
           },0, 10*1000);
 
         Log.d("SplashActivity", "Getting all items");
-        LocalDBControler.getInstance().getAllItems();
+
+        // TODO: 9/19/18 Uraditi ovo kako treba
+//        LocalDBControler.getInstance().getAllItems();
     }
 
     protected boolean isOnline() {

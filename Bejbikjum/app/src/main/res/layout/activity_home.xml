@@ -20,12 +20,26 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/navigation_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button6"
+                android:id="@+id/top_rated_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_rect"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="Top rated"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/featured_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -38,7 +52,7 @@
                 android:textAllCaps="false" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/hot_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -51,7 +65,7 @@
                 android:textAllCaps="false" />
 
             <Button
-                android:id="@+id/button8"
+                android:id="@+id/editors_choice_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -64,7 +78,7 @@
                 android:textAllCaps="false" />
 
             <Button
-                android:id="@+id/button7"
+                android:id="@+id/random_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -73,7 +87,20 @@
                 android:background="@drawable/button_rect"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
-                android:text="Top rated"
+                android:text="Random"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/new_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_rect"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="New!"
                 android:textAllCaps="false" />
 
         </LinearLayout>

@@ -76,8 +76,17 @@ public class ShopInfoActivity extends AppCompatActivity implements ProductTypeAd
                     FirebaseUser currentUser = FirebaseControler.getInstance().getCurrentUser();
 
                     if(currentUser != null){
-                        currentSeller = new Seller(currentUser.getUid(), shopNameInput.getText().toString(), currentUser.getEmail(), "",
+                        if(FacebookControler.getInstance().getToken() != null){
+                            currentSeller = new Seller(currentUser.getUid(), shopNameInput.getText().toString(), currentUser.getEmail(),
+                                "",
                                 FacebookControler.getInstance().getToken().getUserId(), currentUser.getDisplayName(), "", currentSeller.getItemTypes());
+                        }
+                        else {
+                            currentSeller = new Seller(currentUser.getUid(), shopNameInput.getText().toString(), currentUser.getEmail(),
+                                    "",
+                                    "", currentUser.getDisplayName(), "", currentSeller.getItemTypes());
+                        }
+
                         FirebaseControler.getInstance().addFirestoreSeller(null, currentSeller, "");
                     }
                     else{

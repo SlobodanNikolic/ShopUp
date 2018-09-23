@@ -25,12 +25,19 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
+import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.Executor;
 
 import cobe.com.bejbikjum.activities.HomeActivity;
@@ -75,6 +82,26 @@ public class FirebaseControler {
     //Authentication
     private FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
+
+    public DocumentSnapshot getLastVisibleRandom() {
+        return lastVisibleRandom;
+    }
+
+    public void setLastVisibleRandom(DocumentSnapshot lastVisibleRandom) {
+        this.lastVisibleRandom = lastVisibleRandom;
+    }
+
+    public DocumentSnapshot getLastVisibleNew() {
+        return lastVisibleNew;
+    }
+
+    public void setLastVisibleNew(DocumentSnapshot lastVisibleNew) {
+        this.lastVisibleNew = lastVisibleNew;
+    }
+
+    private DocumentSnapshot lastVisibleRandom;
+    private DocumentSnapshot lastVisibleNew;
+
 
     private FirebaseControler(){
         mAuth = FirebaseAuth.getInstance();
@@ -284,6 +311,32 @@ public class FirebaseControler {
                 });
     }
 
+    public void handleRegisterFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(currentActivity, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            user = mAuth.getCurrentUser();
+                            addFirestoreUser(user, null, "");
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(currentContext, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+
+
+                    }
+                });
+    }
+
     public void handleFacebookAccessTokenSeller(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessTokenSeller:" + token);
 
@@ -441,15 +494,45 @@ public class FirebaseControler {
                     if (document.exists()) {
                         // TODO: 17.9.18. A seller account with this email adress is already active
                         //Would you like to log in?
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        saveSellerToLocalDB(document.getData());
+
+                        Intent myShopIntent = new Intent(currentContext.getApplicationContext(), MyShopActivity.class);
+                        currentContext.startActivity(myShopIntent);
 
                     } else {
-                        addFirestoreUser(user, null, "");
+                        // TODO: 9/19/18 Ovome definitivno nije mesto ovde, proveriti o cemu se radi
+                        //Radi se o facebook registraciji
+//                        addFirestoreUser(user, null, "");
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
+    }
+
+    public void logInWithEmailAndPassword(String email, String password){
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = task.getResult().getUser();
+                            mAuth.updateCurrentUser(user);
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            // TODO: 9/19/18 Videti razlog neuspeha i izbaciti poruku
+                            updateUI(null);
+                        }
+
+                        // ...
+                    }
+                });
     }
 
     public void loadFirestoreSellerById(String uid){
@@ -521,6 +604,10 @@ public class FirebaseControler {
     public void addItem(final Item item){
         String uid;
 
+        Random r = new Random();
+        int result = r.nextInt(10000);
+        item.setLikes(result);
+
         final Map<String, Object> finalItemMap = item.toMap();
 
         db.collection("items/")
@@ -564,9 +651,8 @@ public class FirebaseControler {
     public void getTopRated(){
 
         CollectionReference colRef = db.collection("items");
-        colRef.orderBy("timesRated").limit(100);
-
-        colRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        colRef.orderBy("timesRated", Query.Direction.DESCENDING).limit(100)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -576,6 +662,7 @@ public class FirebaseControler {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Map<String, Object> itemMap = document.getData();
                         Item newItem = new Item().parseMap(itemMap);
+                        newItem.setId(document.getId());
                         topRatedItems.add(newItem);
                     }
 
@@ -589,12 +676,176 @@ public class FirebaseControler {
 
     }
 
+    public void getNewItems(){
+
+        CollectionReference colRef = db.collection("items");
+
+        if(lastVisibleNew != null){
+            colRef.orderBy("timestamp")
+                    .startAfter(lastVisibleNew)
+                    .limit(100)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                        lastVisibleNew = documentSnapshots.get(documentSnapshots.size()-1);
+
+                        ArrayList<Item> newItems = new ArrayList<Item>();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> itemMap = document.getData();
+                            Item newItem = new Item().parseMap(itemMap);
+                            newItem.setId(document.getId());
+                            newItems.add(newItem);
+                        }
+
+                        if(listener!=null)
+                            listener.onNewItems(newItems);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        }
+        else{
+            colRef.orderBy("timestamp")
+                    .limit(100)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                        lastVisibleNew = documentSnapshots.get(documentSnapshots.size()-1);
+
+                        ArrayList<Item> newItems = new ArrayList<Item>();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> itemMap = document.getData();
+                            Item newItem = new Item().parseMap(itemMap);
+                            newItem.setId(document.getId());
+                            newItems.add(newItem);
+                        }
+
+                        if(listener!=null)
+                            listener.onNewItems(newItems);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        }
+
+
+
+
+
+
+    }
+
+    public void getRandom(){
+        Random r = new Random();
+        int result = r.nextInt(10000);
+
+        CollectionReference postsRef = db.collection("items");
+        Query next;
+
+        if(lastVisibleRandom != null) {
+            next = postsRef.whereGreaterThan("likes", result)
+                    .orderBy("likes")
+                    .startAfter(lastVisibleRandom)
+                    .limit(50);
+        }
+        else{
+            next = postsRef.whereGreaterThan("likes", result)
+                    .orderBy("likes")
+                    .limit(50);
+        }
+
+        next.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                        // ...
+
+                        if(documentSnapshots.size()==0) {
+                            Log.d(TAG, "No adequate random items");
+                        }
+
+                        // Get the last visible document
+                        lastVisibleRandom = documentSnapshots.getDocuments()
+                                .get(documentSnapshots.size() -1);
+
+                        ArrayList<Item> randomItems = new ArrayList<Item>();
+
+                        for(DocumentSnapshot document : documentSnapshots.getDocuments()){
+                            Item item = new Item().parseMap(document.getData());
+                            randomItems.add(item);
+                        }
+
+                        if(listener!=null)
+                            listener.onRandomItems(randomItems);
+                    }
+
+
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error getting random items", e);
+                        if(listener!=null)
+                            listener.onRandomItemsFailed();
+                    }
+                });
+
+
+    }
+
+    public void likeItem(Item item){
+
+        int likes = item.getTimesRated()+1;
+
+        final Map<String, Object> finalItemMap = new HashMap<>();
+        finalItemMap.put("timesRated", likes);
+
+        db.collection("items")
+                .document(item.getId())
+                .set(finalItemMap, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if(listener!=null)
+                            listener.onItemLiked();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                        if(listener!=null)
+                            listener.onItemLikeFailed();
+                    }
+                });
+
+    }
+
     public interface DownloadListener {
         // These methods are the different events and
         // need to pass relevant arguments related to the event triggered
         // or when data has been loaded
         public void onTopRated(ArrayList<Item> topRatedItems);
         public void onTopRatedFailed();
+
+        public void onNewItems(ArrayList<Item> newItems);
+        public void onNewItemsFailed();
+
+        public void onItemLiked();
+        public void onItemLikeFailed();
+
+        public void onRandomItems(ArrayList<Item> randomItems);
+        public void onRandomItemsFailed();
     }
 
     // Step 2 - This variable represents the listener passed in by the owning object

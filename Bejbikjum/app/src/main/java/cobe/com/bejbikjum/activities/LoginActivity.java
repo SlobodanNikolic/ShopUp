@@ -1,10 +1,10 @@
 package cobe.com.bejbikjum.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
+import android.app.Activity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -16,24 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,23 +29,21 @@ import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.controlers.FacebookControler;
 import cobe.com.bejbikjum.controlers.FirebaseControler;
 
-public class RegisterActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
-    @BindView(R.id.register_button) Button registerButton;
-    @BindView(R.id.sellerButton)
-    TextView sellerButton;
-    @BindView(R.id.email_input) EditText emailInput;
+    @BindView(R.id.register_button)
+    Button registerButton;
+    @BindView(R.id.email_input)
+    EditText emailInput;
     @BindView(R.id.password_input) EditText passwordInput;
-    @BindView(R.id.password_repeat_input) EditText passwordRepeatInput;
     @BindView(R.id.progressLayout)
     LinearLayout progressLayout;
-    @BindView(R.id.textView2) TextView loginButton;
-
+    @BindView(R.id.textView2) TextView registrationButton;
 
 
 
     private static final int RC_SIGN_IN = 123;
-    private static final String TAG = "RegisterActivity";
+    private static final String TAG = "LoginActivity";
     private FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
 
@@ -72,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
         if(actionBar!=null)
             actionBar.hide();
 
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
         FirebaseControler.getInstance().setContext(this, this);
@@ -87,26 +73,20 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if(validateForm()) {
                     showProgressBar();
-                    FirebaseControler.getInstance().createAccount(emailInput.getText().toString(), passwordInput.getText().toString());
+                    FirebaseControler.getInstance().logInWithEmailAndPassword(emailInput.getText().toString(),
+                            passwordInput.getText().toString());
                 }
             }
         });
 
-        sellerButton.setOnClickListener(new View.OnClickListener() {
+        registrationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent sellerInfoIntent = new Intent(getApplicationContext(), SellerInfoActivity.class);
-                startActivity(sellerInfoIntent);
+                Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivity(registerIntent);
             }
         });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(loginIntent);
-            }
-        });
     }
 
     private boolean validateForm() {
@@ -128,34 +108,14 @@ public class RegisterActivity extends AppCompatActivity {
             passwordInput.setError(null);
         }
 
-        String passwordRepeat = passwordRepeatInput.getText().toString();
-        if (TextUtils.isEmpty(passwordRepeat)) {
-            passwordRepeatInput.setError("Required.");
-            valid = false;
-        } else if(password.compareTo(passwordRepeat)!=0){
-            passwordRepeatInput.setError("Passwords don't match.");
-            valid = false;
-        }
-        else{
-            passwordRepeatInput.setError(null);
-        }
-
-
         return valid;
     }
+
 
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        if(FirebaseControler.getInstance().getRegistrationFailed()){
-            Toast.makeText(this, "Registration not completed. Please check your internet connection.",  Toast.LENGTH_LONG);
-            return;
-        }else {
-            // TODO: 9/19/18 Flow nije bas najbolji
-//            FirebaseControler.getInstance().checkCurrentUser();
-            Log.e(TAG, "Oooooo, this is a big one!");
-        }
+
     }
 
     public void setFacebookLoginButton() {
@@ -176,7 +136,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 FacebookControler.getInstance().setToken(loginResult.getAccessToken());
-                FirebaseControler.getInstance().handleRegisterFacebookAccessToken(FacebookControler.getInstance().getToken());
+                FirebaseControler.getInstance().handleFacebookAccessToken(FacebookControler.getInstance().getToken());
             }
 
             @Override
@@ -214,7 +174,4 @@ public class RegisterActivity extends AppCompatActivity {
         // Pass the activity result back to the Facebook SDK
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
-
-
-
 }

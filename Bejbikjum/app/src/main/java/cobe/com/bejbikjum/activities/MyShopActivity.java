@@ -117,6 +117,7 @@ public class MyShopActivity extends AppCompatActivity {
             pDialog.hide();
         }
         else {
+            // TODO: 9/19/18 Povuci sa neta slike za moj shop
             JsonArrayRequest req = new JsonArrayRequest(endpoint,
                     new Response.Listener<JSONArray>() {
                         @Override
@@ -134,7 +135,7 @@ public class MyShopActivity extends AppCompatActivity {
                                     JSONObject url = object.getJSONObject("url");
 //                                image.setSmall(url.getString("small"));
                                     image.setMedium(url.getString("medium"));
-                                    image.setTimestamp(object.getString("timestamp"));
+//                                    image.setTimestamp(object.getString("timestamp"));
 
                                     items.add(image);
 

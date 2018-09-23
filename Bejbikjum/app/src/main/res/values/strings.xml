@@ -12,4 +12,5 @@
     <string name="fb_login_protocol_scheme">fb622911124769290</string>
     <string name="facebook_application_id" translatable="false">APP_ID</string>
     <string name="title_activity_password">PasswordActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>

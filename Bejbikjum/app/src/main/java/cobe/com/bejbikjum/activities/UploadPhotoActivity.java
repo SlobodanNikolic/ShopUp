@@ -157,7 +157,7 @@ public class UploadPhotoActivity extends AppCompatActivity implements ProductTyp
             public void onClick(View view) {
 
                 if(validate()){
-                    currentItem = new Item("", itemNameInput.getText().toString(), Timestamp.now().toString(), null, null, descriptionInput.getText().toString(), 0f, 0, 0, null, "", materialsInput.getText().toString(),
+                    currentItem = new Item("", itemNameInput.getText().toString(), Timestamp.now().getSeconds(), null, null, descriptionInput.getText().toString(), 0f, 0, 0, null, "", materialsInput.getText().toString(),
                             currentItem.getColorString(), AppControler.getInstance().getCurrentSeller().getUid(),
                             AppControler.getInstance().getCurrentSeller().getShopName(), priceInput.getText().toString(), currentItem.getItemType());
 
