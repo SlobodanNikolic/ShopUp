@@ -49,6 +49,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button featuredButton;
     private Button randomButton;
     private Button newButton;
+    private Button searchButton;
     private GridLayoutManager mlayoutManager;
 
     private int pageNumber = 1;
@@ -79,6 +80,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        searchButton = (Button) findViewById(R.id.search_button);
 
         pDialog = new ProgressDialog(this);
         items = new ArrayList<>();
@@ -189,6 +191,13 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(searchIntent);
+            }
+        });
     }
 
     public void getTopRated(){
