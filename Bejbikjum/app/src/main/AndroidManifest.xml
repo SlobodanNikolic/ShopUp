@@ -96,7 +96,10 @@
             android:label="@string/title_activity_password" />
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".activities.SearchActivity"
+            android:label="@string/title_activity_search"></activity>
     </application>
 
 </manifest>

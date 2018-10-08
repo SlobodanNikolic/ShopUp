@@ -28,6 +28,7 @@ import java.util.Date;
 
 import cobe.com.bejbikjum.R;
 import cobe.com.bejbikjum.adapters.GalleryAdapter;
+import cobe.com.bejbikjum.adapters.PagingAdapter;
 import cobe.com.bejbikjum.app.AppController;
 import cobe.com.bejbikjum.controlers.FirebaseControler;
 import cobe.com.bejbikjum.controlers.LocalDBControler;
@@ -40,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<Item> items;
     private ProgressDialog pDialog;
     private GalleryAdapter mAdapter;
+    private PagingAdapter pagingAdapter;
     private RecyclerView recyclerView;
     private Button topRatedButton;
     private Button hotButton;
@@ -47,6 +49,21 @@ public class HomeActivity extends AppCompatActivity {
     private Button featuredButton;
     private Button randomButton;
     private Button newButton;
+    private GridLayoutManager mlayoutManager;
+
+    private int pageNumber = 1;
+    private int itemCount = 50;
+
+    private boolean isLoading = true;
+    private int pastVisibleItems, visibleItemCount, totalItemCount, previousTotal = 0;
+    private int viewTreshold = 0;
+
+    public enum TAB_ID{
+        TOP, NEW, RANDOM;
+    }
+
+    private TAB_ID currentTab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +82,26 @@ public class HomeActivity extends AppCompatActivity {
 
         pDialog = new ProgressDialog(this);
         items = new ArrayList<>();
-        mAdapter = new GalleryAdapter(getApplicationContext(), items);
+//        mAdapter = new GalleryAdapter(getApplicationContext(), items);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        recyclerView.setLayoutManager(mLayoutManager);
+        pagingAdapter = new PagingAdapter(items, HomeActivity.this);
+
+//        final RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+
+        mlayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        recyclerView.setLayoutManager(mlayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+//        recyclerView.setAdapter(mAdapter);
+
+        recyclerView.setAdapter(pagingAdapter);
 
         recyclerView.addOnItemTouchListener(new GalleryAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new GalleryAdapter.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                int positionWithAds = position - (position/12 +1);
+//                int positionWithAds = position - (position/12 +1);
 
                 Intent imageDetailsIntent = new Intent(getApplicationContext(), ImageDetailsActivity.class);
-                imageDetailsIntent.putExtra("item", items.get(positionWithAds));
+                imageDetailsIntent.putExtra("item", items.get(position));
                 startActivity(imageDetailsIntent);
             }
 
@@ -88,9 +111,50 @@ public class HomeActivity extends AppCompatActivity {
             }
         }));
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                visibleItemCount = mlayoutManager.getChildCount();
+                totalItemCount = mlayoutManager.getItemCount();
+                pastVisibleItems = mlayoutManager.findFirstVisibleItemPosition();
+
+                if(dy > 0){
+                    Log.d(TAG, "Scrolling down...");
+
+                    if(isLoading){
+                        Log.d(TAG, "Currently downloading...");
+                        if(totalItemCount > previousTotal){
+                            Log.d(TAG, "Download stopped...");
+                            isLoading = false;
+                            previousTotal = totalItemCount;
+                        }
+                    }
+                    if(!isLoading && (totalItemCount - visibleItemCount) <= (pastVisibleItems+visibleItemCount)){
+
+                        Log.d(TAG, "Time to refresh...");
+                        isLoading = true;
+
+                        if(currentTab == TAB_ID.TOP) {
+                            getTopRated();
+                            Log.d(TAG, "Getting top rated.");
+
+                        }
+                        else if(currentTab == TAB_ID.NEW) {
+                            getNewItems();
+                            Log.d(TAG, "Getting new items");
+
+                        }
+
+                    }
+                }
+            }
+        });
+
         setListeners();
 
-        FirebaseControler.getInstance().getTopRated();
+        getTopRated();
 
         topRatedButton = (Button) findViewById(R.id.top_rated_button);
         hotButton = (Button)findViewById(R.id.hot_button);
@@ -102,7 +166,13 @@ public class HomeActivity extends AppCompatActivity {
         topRatedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseControler.getInstance().getTopRated();
+                Log.d(TAG, "Top Rated clicked");
+                items.clear();
+                pagingAdapter.notifyDataSetChanged();
+                FirebaseControler.getInstance().setLastVisibleTopRated(null);
+                FirebaseControler.getInstance().setLastVisibleNew(null);
+                FirebaseControler.getInstance().setLastVisibleRandom(null);
+                getTopRated();
             }
         });
 
@@ -110,77 +180,36 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG,"New button clicked");
+                items.clear();
+                pagingAdapter.notifyDataSetChanged();
                 FirebaseControler.getInstance().setLastVisibleNew(null);
-                FirebaseControler.getInstance().getNewItems();
+                FirebaseControler.getInstance().setLastVisibleTopRated(null);
+                FirebaseControler.getInstance().setLastVisibleRandom(null);
+                getNewItems();
             }
         });
 
     }
 
+    public void getTopRated(){
+
+        FirebaseControler.getInstance().getTopRated();
+        currentTab = TAB_ID.TOP;
+    }
+
+    public void getNewItems(){
+//        items.clear();
+//        FirebaseControler.getInstance().setLastVisibleTopRated(null);
+//        FirebaseControler.getInstance().setLastVisibleRandom(null);
+        FirebaseControler.getInstance().getNewItems();
+        currentTab = TAB_ID.NEW;
+    }
 
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
     }
 
-    private void fetchImages() {
-
-        pDialog.setMessage("Downloading...");
-        pDialog.show();
-
-        Log.d(TAG,"Checking if there's any items in LocalDB");
-        if(LocalDBControler.getInstance().getShopItems()!=null){
-            items.clear();
-            Log.d("MyShopActivity", "LocalDB has shop items");
-            ArrayList<Item> itemsHelperList = new ArrayList<Item>(LocalDBControler.getInstance().getShopItems());
-
-            for(Item item : itemsHelperList) {
-                Log.d(TAG, item.toString());
-                items.add(item);
-            }
-            mAdapter.notifyDataSetChanged();
-            pDialog.hide();
-        }
-        else {
-            JsonArrayRequest req = new JsonArrayRequest(endpoint,
-                    new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            Log.d(TAG, response.toString());
-                            pDialog.hide();
-
-                            items.clear();
-                            for (int i = 0; i < response.length(); i++) {
-                                try {
-                                    JSONObject object = response.getJSONObject(i);
-                                    Item image = new Item();
-                                    image.setName(object.getString("name"));
-
-                                    JSONObject url = object.getJSONObject("url");
-//                                image.setSmall(url.getString("small"));
-                                    image.setMedium(url.getString("medium"));
-//                                    image.setTimestamp(object.getString("timestamp"));
-
-                                    items.add(image);
-
-                                } catch (JSONException e) {
-                                    Log.e(TAG, "Json parsing error: " + e.getMessage());
-                                }
-                            }
-
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "Error: " + error.getMessage());
-                    pDialog.hide();
-                }
-            });
-            // Adding request to request queue
-            AppController.getInstance().addToRequestQueue(req);
-        }
-    }
 
     @Override
     public void onResume(){
@@ -189,18 +218,21 @@ public class HomeActivity extends AppCompatActivity {
         setListeners();
     }
 
+
     public void setListeners(){
         FirebaseControler.getInstance().setDownloadListener(new FirebaseControler.DownloadListener() {
             @Override
             public void onTopRated(ArrayList<Item> topRatedItems) {
+                isLoading = false;
                 if(topRatedItems!=null) {
                     Log.d(TAG, "Top rated items ready: " + topRatedItems.size());
-                    items.clear();
+//                    items.clear();
 
                     for(Item item : topRatedItems)
                         items.add(item);
 
-                    mAdapter.notifyDataSetChanged();
+//                    mAdapter.notifyDataSetChanged();
+                    pagingAdapter.notifyDataSetChanged();
                 }
                 else {
                     Log.d(TAG, "No top rated items");
@@ -214,14 +246,16 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onNewItems(ArrayList<Item> newItems) {
+                isLoading = false;
                 if(newItems!=null) {
                     Log.d(TAG, "New items ready: " + newItems.size());
-                    items.clear();
+//                    items.clear();
 
                     for(Item item : newItems)
                         items.add(item);
 
-                    mAdapter.notifyDataSetChanged();
+                    pagingAdapter.notifyDataSetChanged();
+//                    mAdapter.notifyDataSetChanged();
                 }
                 else {
                     Log.d(TAG, "No new items");
@@ -245,6 +279,7 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onRandomItems(ArrayList<Item> randomItems) {
+                isLoading = false;
                 if(randomItems!=null) {
                     Log.d(TAG, "Random items ready: " + randomItems.size());
                     items.clear();
@@ -252,7 +287,7 @@ public class HomeActivity extends AppCompatActivity {
                     for(Item item : randomItems)
                         items.add(item);
 
-                    mAdapter.notifyDataSetChanged();
+                    pagingAdapter.notifyDataSetChanged();
                 }
                 else {
                     Log.d(TAG, "No random items");

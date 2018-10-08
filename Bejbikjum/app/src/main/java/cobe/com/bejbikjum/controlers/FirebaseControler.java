@@ -100,7 +100,18 @@ public class FirebaseControler {
     }
 
     private DocumentSnapshot lastVisibleRandom;
+
+    public void setLastVisibleTopRated(DocumentSnapshot lastVisibleTopRated) {
+        this.lastVisibleTopRated = lastVisibleTopRated;
+    }
+
+    public DocumentSnapshot getLastVisibleTopRated() {
+
+        return lastVisibleTopRated;
+    }
+
     private DocumentSnapshot lastVisibleNew;
+    private DocumentSnapshot lastVisibleTopRated;
 
 
     private FirebaseControler(){
@@ -651,28 +662,74 @@ public class FirebaseControler {
     public void getTopRated(){
 
         CollectionReference colRef = db.collection("items");
-        colRef.orderBy("timesRated", Query.Direction.DESCENDING).limit(100)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
 
-                    ArrayList<Item> topRatedItems = new ArrayList<Item>();
+        if(lastVisibleTopRated != null){
+            colRef.orderBy("timesRated", Query.Direction.DESCENDING)
+                    .startAfter(lastVisibleTopRated)
+                    .limit(50)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
 
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Map<String, Object> itemMap = document.getData();
-                        Item newItem = new Item().parseMap(itemMap);
-                        newItem.setId(document.getId());
-                        topRatedItems.add(newItem);
+                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                        if(documentSnapshots.size()>0)
+                            lastVisibleTopRated = documentSnapshots.get(documentSnapshots.size()-1);
+                        else{
+                            // TODO: 9/26/18 Display a message: No new items
+                            if (listener != null)
+                                listener.onTopRated(null);
+                            return;
+                        }
+
+                        ArrayList<Item> topRatedItems = new ArrayList<Item>();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> itemMap = document.getData();
+                            Item newItem = new Item().parseMap(itemMap);
+                            newItem.setId(document.getId());
+                            topRatedItems.add(newItem);
+                        }
+
+                        if (listener != null)
+                            listener.onTopRated(topRatedItems);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
                     }
-
-                    if(listener!=null)
-                        listener.onTopRated(topRatedItems);
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
                 }
-            }
-        });
+            });
+        }
+        else {
+            colRef.orderBy("timesRated", Query.Direction.DESCENDING).limit(50)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                        if(documentSnapshots.size()>0)
+                            lastVisibleTopRated = documentSnapshots.get(documentSnapshots.size()-1);
+                        else{
+                            // TODO: 9/26/18 Display a message: No new items
+                            return;
+                        }
+                        ArrayList<Item> topRatedItems = new ArrayList<Item>();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> itemMap = document.getData();
+                            Item newItem = new Item().parseMap(itemMap);
+                            newItem.setId(document.getId());
+                            topRatedItems.add(newItem);
+                        }
+
+                        if (listener != null)
+                            listener.onTopRated(topRatedItems);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        }
 
     }
 
@@ -683,15 +740,19 @@ public class FirebaseControler {
         if(lastVisibleNew != null){
             colRef.orderBy("timestamp")
                     .startAfter(lastVisibleNew)
-                    .limit(100)
+                    .limit(50)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
 
                         List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
-                        lastVisibleNew = documentSnapshots.get(documentSnapshots.size()-1);
-
+                        if(documentSnapshots.size()>0)
+                            lastVisibleNew = documentSnapshots.get(documentSnapshots.size()-1);
+                        else{
+                            // TODO: 9/26/18 Display a message: No new items
+                            return;
+                        }
                         ArrayList<Item> newItems = new ArrayList<Item>();
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -711,15 +772,19 @@ public class FirebaseControler {
         }
         else{
             colRef.orderBy("timestamp")
-                    .limit(100)
+                    .limit(50)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
 
                         List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
-                        lastVisibleNew = documentSnapshots.get(documentSnapshots.size()-1);
-
+                        if(documentSnapshots.size()>0)
+                            lastVisibleNew = documentSnapshots.get(documentSnapshots.size()-1);
+                        else{
+                            // TODO: 9/26/18 Display a message: No new items
+                            return;
+                        }
                         ArrayList<Item> newItems = new ArrayList<Item>();
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -775,8 +840,14 @@ public class FirebaseControler {
                         }
 
                         // Get the last visible document
-                        lastVisibleRandom = documentSnapshots.getDocuments()
-                                .get(documentSnapshots.size() -1);
+                        if(documentSnapshots.size()>0) {
+                            lastVisibleRandom = documentSnapshots.getDocuments()
+                                    .get(documentSnapshots.size() - 1);
+                        }
+                        else{
+                            // TODO: 9/26/18 isto ko i gore
+                            return;
+                        }
 
                         ArrayList<Item> randomItems = new ArrayList<Item>();
 
