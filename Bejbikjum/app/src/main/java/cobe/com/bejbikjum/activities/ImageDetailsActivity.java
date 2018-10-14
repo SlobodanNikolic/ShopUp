@@ -69,7 +69,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
         item = (Item) data.getParcelable("item");
 
         nameTextView.setText(item.getName());
-        priceTextView.setText(item.getPrice());
+        priceTextView.setText(item.getPrice()+"");
         materialsTextView.setText(item.getMaterialString());
         detailsTextView.setText(item.getDescription());
         shopName.setText(item.getShopName());

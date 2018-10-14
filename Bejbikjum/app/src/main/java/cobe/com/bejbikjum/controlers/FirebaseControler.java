@@ -386,7 +386,7 @@ public class FirebaseControler {
              userMap = appUser.toMap();
         }
         else if(u != null){
-            User newUser = new User(u.getUid(),"", u.getEmail(), password, "", "");
+            User newUser = new User(u.getUid(),"", u.getEmail(), password, "", "", "");
             userMap = newUser.toMap();
         }
         else{
@@ -585,7 +585,9 @@ public class FirebaseControler {
                 userData.get("email").toString(),
                 userData.get("password").toString(),
                 userData.get("fbid").toString(),
-                userData.get("fullName").toString());
+                userData.get("fullName").toString(),
+                userData.get("itemsLiked").toString());
+
         AppControler.getInstance().isSeller = false;
         AppControler.getInstance().setCurrentUser(user);
     }
@@ -614,10 +616,6 @@ public class FirebaseControler {
 
     public void addItem(final Item item){
         String uid;
-
-        Random r = new Random();
-        int result = r.nextInt(10000);
-        item.setLikes(result);
 
         final Map<String, Object> finalItemMap = item.toMap();
 
@@ -664,7 +662,7 @@ public class FirebaseControler {
         CollectionReference colRef = db.collection("items");
 
         if(lastVisibleTopRated != null){
-            colRef.orderBy("timesRated", Query.Direction.DESCENDING)
+            colRef.orderBy("likes", Query.Direction.DESCENDING)
                     .startAfter(lastVisibleTopRated)
                     .limit(50)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -700,7 +698,7 @@ public class FirebaseControler {
             });
         }
         else {
-            colRef.orderBy("timesRated", Query.Direction.DESCENDING).limit(50)
+            colRef.orderBy("likes", Query.Direction.DESCENDING).limit(50)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -876,10 +874,10 @@ public class FirebaseControler {
 
     public void likeItem(Item item){
 
-        int likes = item.getTimesRated()+1;
+        int likes = item.getLikes()+1;
 
         final Map<String, Object> finalItemMap = new HashMap<>();
-        finalItemMap.put("timesRated", likes);
+        finalItemMap.put("likes", likes);
 
         db.collection("items")
                 .document(item.getId())

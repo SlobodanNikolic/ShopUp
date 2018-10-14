@@ -84,6 +84,7 @@ public class StorageControler {
         String uid = FirebaseControler.getInstance().getCurrentUser().getUid();
 
         progressCounter = 0;
+
         for(int i = 0; i<imageData.length; i++){
             if(imageData[i]!=null)
                 progressCounter++;

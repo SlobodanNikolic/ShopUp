@@ -27,6 +27,7 @@ import com.google.firebase.Timestamp;
 
 import java.io.Console;
 import java.util.Arrays;
+import java.util.Random;
 
 import cobe.com.bejbikjum.DAO.LocalDB;
 import cobe.com.bejbikjum.R;
@@ -157,9 +158,13 @@ public class UploadPhotoActivity extends AppCompatActivity implements ProductTyp
             public void onClick(View view) {
 
                 if(validate()){
-                    currentItem = new Item("", itemNameInput.getText().toString(), Timestamp.now().getSeconds(), null, null, descriptionInput.getText().toString(), 0f, 0, 0, null, "", materialsInput.getText().toString(),
-                            currentItem.getColorString(), AppControler.getInstance().getCurrentSeller().getUid(),
-                            AppControler.getInstance().getCurrentSeller().getShopName(), priceInput.getText().toString(), currentItem.getItemType());
+
+                    Random r = new Random();
+                    int randomNum = r.nextInt(10000);
+
+                    currentItem = new Item("", itemNameInput.getText().toString(), Timestamp.now().getSeconds(), materialsInput.getText().toString(), descriptionInput.getText().toString(), randomNum, 0, "", "", currentItem.getColorString(),
+                            AppControler.getInstance().getCurrentSeller().getUid(), AppControler.getInstance().getCurrentSeller().getShopName(), Integer.parseInt(priceInput.getText().toString()), currentItem.getItemType(),
+                            0, 0, AppControler.getInstance().getCurrentSeller().getShopName());
 
                     StorageControler.getInstance().uploadImage(imageUris, currentItem, progressLayout);
                 }

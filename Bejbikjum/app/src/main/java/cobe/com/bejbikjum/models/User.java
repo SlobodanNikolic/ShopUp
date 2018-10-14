@@ -11,14 +11,16 @@ public class User {
     private String password;
     private String fbid;
     private String fullName;
+    private String itemsLiked;
 
-    public User(String uid, String username, String email, String password, String fbid, String fullName) {
+    public User(String uid, String username, String email, String password, String fbid, String fullName, String itemsLiked) {
         this.uid = uid;
         this.username = username;
         this.email = email;
         this.password = password;
         this.fbid = fbid;
         this.fullName = fullName;
+        this.itemsLiked = itemsLiked;
     }
 
     public User(){
@@ -28,9 +30,19 @@ public class User {
         this.password = "";
         this.fbid = "";
         this.fullName = "";
+        this.itemsLiked = "";
+    }
+
+    public String getItemsLiked() {
+        return itemsLiked;
+    }
+
+    public void setItemsLiked(String itemsLiked) {
+        this.itemsLiked = itemsLiked;
     }
 
     public Map toMap(){
+
         Map<String, Object> user = new HashMap<>();
         user.put("uid", uid);
         user.put("username", username);
@@ -38,6 +50,7 @@ public class User {
         user.put("password", password);
         user.put("fbid", fbid);
         user.put("fullName", fullName);
+        user.put("itemsLiked", itemsLiked);
 
         return user;
     }
