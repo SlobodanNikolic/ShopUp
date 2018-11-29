@@ -1,5 +1,6 @@
 package cobe.com.bejbikjum.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -34,11 +35,13 @@ public class SearchActivity extends AppCompatActivity implements ProductTypeAdap
     private TextView minPrice;
     private TextView maxPrice;
     private TextView startSearchButton;
+    private String itemTypeString;
 
     private String selectedColor;
     private String selectedItemName;
     private String selectedShopName;
-    private int selectedPrice;
+    private int selectedPriceMin;
+    private int selectedPriceMax;
 
 
     @Override
@@ -87,6 +90,7 @@ public class SearchActivity extends AppCompatActivity implements ProductTypeAdap
                     removeAllColorBorders();
                     view.setBackgroundResource(R.drawable.square_border);
                     // TODO: 10/8/18 Uraditi akciju
+                    selectedColor = view.getTag().toString();
                 }
             });
         }
@@ -96,6 +100,8 @@ public class SearchActivity extends AppCompatActivity implements ProductTypeAdap
             public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
                 minPrice.setText(minValue.toString());
                 maxPrice.setText(maxValue.toString());
+                selectedPriceMin = minValue;
+                selectedPriceMax = maxValue;
             }
         });
 
@@ -104,6 +110,13 @@ public class SearchActivity extends AppCompatActivity implements ProductTypeAdap
             @Override
             public void onClick(View view) {
                 // TODO: 10/8/18 Start search
+//                String item = itemName.getText().toString();
+//                String shop = shopName.getText().toString();
+
+                Intent homeSearchIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                homeSearchIntent.putExtra("action", "search");
+                homeSearchIntent.putExtra("itemType",  itemTypeString);
+                startActivity(homeSearchIntent);
             }
         });
 
@@ -120,6 +133,7 @@ public class SearchActivity extends AppCompatActivity implements ProductTypeAdap
         if(selected){
             productLayout.setBackgroundResource(R.drawable.square_border);
             // TODO: 10/8/18 Akcija
+            itemTypeString = productTypeName.getText().toString();
         }
         else {
             productLayout.setBackgroundResource(0);

@@ -110,8 +110,18 @@ public class FirebaseControler {
         return lastVisibleTopRated;
     }
 
+    public void setLastVisibleSearched(DocumentSnapshot lastVisibleSearched) {
+        this.lastVisibleSearched = lastVisibleSearched;
+    }
+
+    public DocumentSnapshot getLastVisibleSearched() {
+
+        return lastVisibleSearched;
+    }
+
     private DocumentSnapshot lastVisibleNew;
     private DocumentSnapshot lastVisibleTopRated;
+    private DocumentSnapshot lastVisibleSearched;
 
 
     private FirebaseControler(){
@@ -658,10 +668,12 @@ public class FirebaseControler {
     }
 
     public void getTopRated(){
-
+        Log.d(TAG, "Getting top rated items");
         CollectionReference colRef = db.collection("items");
 
         if(lastVisibleTopRated != null){
+            Log.d(TAG, "Last visible not null");
+
             colRef.orderBy("likes", Query.Direction.DESCENDING)
                     .startAfter(lastVisibleTopRated)
                     .limit(50)
@@ -674,6 +686,8 @@ public class FirebaseControler {
                         if(documentSnapshots.size()>0)
                             lastVisibleTopRated = documentSnapshots.get(documentSnapshots.size()-1);
                         else{
+                            Log.d(TAG, "No new top rated items");
+
                             // TODO: 9/26/18 Display a message: No new items
                             if (listener != null)
                                 listener.onTopRated(null);
@@ -698,6 +712,8 @@ public class FirebaseControler {
             });
         }
         else {
+            Log.d(TAG, "Getting top rated items, last visible is null");
+
             colRef.orderBy("likes", Query.Direction.DESCENDING).limit(50)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -708,6 +724,8 @@ public class FirebaseControler {
                         if(documentSnapshots.size()>0)
                             lastVisibleTopRated = documentSnapshots.get(documentSnapshots.size()-1);
                         else{
+                            Log.d(TAG, "No new top rated items");
+
                             // TODO: 9/26/18 Display a message: No new items
                             return;
                         }
@@ -900,6 +918,81 @@ public class FirebaseControler {
 
     }
 
+
+    public void getSearchedItems(String itemType){
+        Log.d(TAG, "Getting items with type " + itemType);
+        CollectionReference colRef = db.collection("items");
+
+        if(lastVisibleSearched != null){
+            colRef.whereEqualTo("itemType", itemType)
+                    .startAfter(lastVisibleSearched)
+                    .limit(50)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                        if(documentSnapshots.size()>0)
+                            lastVisibleSearched = documentSnapshots.get(documentSnapshots.size()-1);
+                        else{
+                            // TODO: 9/26/18 Display a message: No new items
+                            if (listener != null)
+                                listener.onSearched(null);
+                            return;
+                        }
+
+                        ArrayList<Item> searchedItems = new ArrayList<Item>();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> itemMap = document.getData();
+                            Item newItem = new Item().parseMap(itemMap);
+                            newItem.setId(document.getId());
+                            searchedItems.add(newItem);
+                        }
+
+                        if (listener != null)
+                            listener.onSearched(searchedItems);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        }
+        else {
+            colRef.whereEqualTo("itemType", itemType).limit(50)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                        if(documentSnapshots.size()>0)
+                            lastVisibleSearched = documentSnapshots.get(documentSnapshots.size()-1);
+                        else{
+                            // TODO: 9/26/18 Display a message: No new items
+                            return;
+                        }
+                        ArrayList<Item> searchedItems = new ArrayList<Item>();
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> itemMap = document.getData();
+                            Item newItem = new Item().parseMap(itemMap);
+                            newItem.setId(document.getId());
+                            searchedItems.add(newItem);
+                        }
+
+                        if (listener != null)
+                            listener.onSearched(searchedItems);
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+        }
+
+    }
+
     public interface DownloadListener {
         // These methods are the different events and
         // need to pass relevant arguments related to the event triggered
@@ -915,6 +1008,9 @@ public class FirebaseControler {
 
         public void onRandomItems(ArrayList<Item> randomItems);
         public void onRandomItemsFailed();
+
+        public void onSearched(ArrayList<Item> searchedItems);
+        public void onSearchedFailed();
     }
 
     // Step 2 - This variable represents the listener passed in by the owning object

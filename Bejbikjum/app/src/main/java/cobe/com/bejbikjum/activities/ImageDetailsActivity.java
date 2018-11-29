@@ -138,6 +138,16 @@ public class ImageDetailsActivity extends AppCompatActivity {
             public void onRandomItemsFailed() {
 
             }
+
+            @Override
+            public void onSearched(ArrayList<Item> searchedItems) {
+
+            }
+
+            @Override
+            public void onSearchedFailed() {
+
+            }
         });
     }
 

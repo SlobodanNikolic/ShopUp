@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity {
     private int viewTreshold = 0;
 
     public enum TAB_ID{
-        TOP, NEW, RANDOM;
+        TOP, NEW, RANDOM, SEARCHED;
     }
 
     private TAB_ID currentTab;
@@ -148,6 +148,10 @@ public class HomeActivity extends AppCompatActivity {
                             Log.d(TAG, "Getting new items");
 
                         }
+                        else if(currentTab == TAB_ID.SEARCHED){
+                            getSearched();
+                            Log.d(TAG, "Getting searched items");
+                        }
 
                     }
                 }
@@ -156,7 +160,16 @@ public class HomeActivity extends AppCompatActivity {
 
         setListeners();
 
-        getTopRated();
+        String action = getIntent().getExtras().getString("action");
+        if(action != null && action.compareTo("search") == 0){
+            Log.d(TAG, "Activity started with search action");
+            getSearched();
+        }
+        else {
+            Log.d(TAG, "Activity started with top rated action");
+
+            getTopRated();
+        }
 
         topRatedButton = (Button) findViewById(R.id.top_rated_button);
         hotButton = (Button)findViewById(R.id.hot_button);
@@ -174,6 +187,8 @@ public class HomeActivity extends AppCompatActivity {
                 FirebaseControler.getInstance().setLastVisibleTopRated(null);
                 FirebaseControler.getInstance().setLastVisibleNew(null);
                 FirebaseControler.getInstance().setLastVisibleRandom(null);
+                FirebaseControler.getInstance().setLastVisibleSearched(null);
+
                 getTopRated();
             }
         });
@@ -187,6 +202,8 @@ public class HomeActivity extends AppCompatActivity {
                 FirebaseControler.getInstance().setLastVisibleNew(null);
                 FirebaseControler.getInstance().setLastVisibleTopRated(null);
                 FirebaseControler.getInstance().setLastVisibleRandom(null);
+                FirebaseControler.getInstance().setLastVisibleSearched(null);
+
                 getNewItems();
             }
         });
@@ -198,6 +215,11 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(searchIntent);
             }
         });
+    }
+
+    public void getSearched(){
+        FirebaseControler.getInstance().getSearchedItems(getIntent().getStringExtra("itemType"));
+        currentTab = TAB_ID.SEARCHED;
     }
 
     public void getTopRated(){
@@ -305,6 +327,28 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onRandomItemsFailed() {
+
+            }
+
+            @Override
+            public void onSearched(ArrayList<Item> searchedItems) {
+                isLoading = false;
+                if(searchedItems!=null) {
+                    Log.d(TAG, "Searched items ready: " + searchedItems.size());
+                    items.clear();
+
+                    for(Item item : searchedItems)
+                        items.add(item);
+
+                    pagingAdapter.notifyDataSetChanged();
+                }
+                else {
+                    Log.d(TAG, "No searched items");
+                }
+            }
+
+            @Override
+            public void onSearchedFailed() {
 
             }
 
