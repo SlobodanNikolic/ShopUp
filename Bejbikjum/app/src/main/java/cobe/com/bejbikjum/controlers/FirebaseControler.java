@@ -250,7 +250,7 @@ public class FirebaseControler {
         // [END send_email_verification]
     }
 
-    private void signOut() {
+    public void signOut() {
         mAuth.signOut();
         updateUI(null);
     }

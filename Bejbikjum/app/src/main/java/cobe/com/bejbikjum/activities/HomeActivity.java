@@ -50,6 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button randomButton;
     private Button newButton;
     private Button searchButton;
+    private Button profileButton;
     private GridLayoutManager mlayoutManager;
 
     private int pageNumber = 1;
@@ -177,6 +178,7 @@ public class HomeActivity extends AppCompatActivity {
         featuredButton = (Button)findViewById(R.id.featured_button);
         randomButton = (Button)findViewById(R.id.random_button);
         newButton = (Button)findViewById(R.id.new_button);
+        profileButton = (Button)findViewById(R.id.profile_button);
 
         topRatedButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,6 +215,14 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(searchIntent);
+            }
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                startActivity(profileIntent);
             }
         });
     }
