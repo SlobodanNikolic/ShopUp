@@ -256,7 +256,7 @@ public class FirebaseControler {
     }
 
     private void updateUI(FirebaseUser u){
-        if (user != null) {
+        if (u != null) {
             // TODO: 27.8.18.
             //Ubaciti load podataka sa firestore-a
             loadFirestoreUserById(u);
