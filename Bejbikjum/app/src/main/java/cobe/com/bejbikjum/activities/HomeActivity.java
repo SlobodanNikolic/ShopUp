@@ -228,7 +228,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void getSearched(){
-        FirebaseControler.getInstance().getSearchedItems(getIntent().getStringExtra("itemType"));
+        FirebaseControler.getInstance().getSearchedItems(getIntent().getStringExtra("shopName"),
+                getIntent().getStringExtra("itemName"),
+                getIntent().getStringExtra("itemType"),
+                getIntent().getIntExtra("itemPriceMin", 0), getIntent().getIntExtra("itemPriceMax", 100000),
+                getIntent().getStringExtra("itemColor"));
         currentTab = TAB_ID.SEARCHED;
     }
 

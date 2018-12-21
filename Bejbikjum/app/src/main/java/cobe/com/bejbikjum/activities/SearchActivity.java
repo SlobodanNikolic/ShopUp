@@ -82,6 +82,9 @@ public class SearchActivity extends AppCompatActivity implements ProductTypeAdap
         minPrice = (TextView) findViewById(R.id.min_price);
         maxPrice = (TextView) findViewById(R.id.max_price);
 
+        itemName = (EditText) findViewById(R.id.item_name_search);
+        shopName = (EditText) findViewById(R.id.shop_name_search);
+
 
         for(ImageView view : colorViews){
             view.setOnClickListener(new View.OnClickListener() {
@@ -109,13 +112,21 @@ public class SearchActivity extends AppCompatActivity implements ProductTypeAdap
         startSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(selectedPriceMax == 0)
+                    selectedPriceMax = 100000;
+
                 // TODO: 10/8/18 Start search
-//                String item = itemName.getText().toString();
-//                String shop = shopName.getText().toString();
+                selectedItemName = itemName.getText().toString();
+                selectedShopName = shopName.getText().toString();
 
                 Intent homeSearchIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 homeSearchIntent.putExtra("action", "search");
+                homeSearchIntent.putExtra("itemName", selectedItemName);
+                homeSearchIntent.putExtra("shopName", selectedShopName);
                 homeSearchIntent.putExtra("itemType",  itemTypeString);
+                homeSearchIntent.putExtra("itemPriceMin", selectedPriceMin);
+                homeSearchIntent.putExtra("itemPriceMax", selectedPriceMax);
+                homeSearchIntent.putExtra("itemColor", selectedColor);
                 startActivity(homeSearchIntent);
             }
         });

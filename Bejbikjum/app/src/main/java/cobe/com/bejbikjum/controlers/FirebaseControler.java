@@ -919,12 +919,18 @@ public class FirebaseControler {
     }
 
 
-    public void getSearchedItems(String itemType){
-        Log.d(TAG, "Getting items with type " + itemType);
+    public void getSearchedItems(String shopName, String itemName, String itemType, int priceMin, int priceMax, String color){
+        Log.d(TAG, "Getting items: " + shopName + ", " + itemName + ", " + itemType + ", "
+                + priceMin + ", " + priceMax + ", " + color + ".");
         CollectionReference colRef = db.collection("items");
 
         if(lastVisibleSearched != null){
             colRef.whereEqualTo("itemType", itemType)
+                    .whereEqualTo("shopName", shopName)
+                    .whereEqualTo("name", itemName)
+                    .whereEqualTo("color", color)
+                    .whereGreaterThanOrEqualTo("price", priceMin)
+                    .whereLessThanOrEqualTo("price", priceMax)
                     .startAfter(lastVisibleSearched)
                     .limit(50)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -960,7 +966,12 @@ public class FirebaseControler {
             });
         }
         else {
-            colRef.whereEqualTo("itemType", itemType).limit(50)
+            colRef.whereEqualTo("itemType", itemType)
+                    .whereEqualTo("shopName", shopName)
+                    .whereEqualTo("name", itemName)
+                    .whereEqualTo("colorString", color)
+                    .whereGreaterThanOrEqualTo("price", priceMin)
+                    .whereLessThanOrEqualTo("price", priceMax).limit(50)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
