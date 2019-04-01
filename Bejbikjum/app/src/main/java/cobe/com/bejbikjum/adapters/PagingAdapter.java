@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +58,9 @@ public class PagingAdapter extends RecyclerView.Adapter<PagingAdapter.MyViewHold
                 .transition(withCrossFade())
                 .apply(myOptions)
                 .into(imageHolder.itemImage);
+
+        imageHolder.itemNameTextView.setText(image.getName());
+        imageHolder.itemPriceTextView.setText(image.getPrice()+"");
     }
 
     @Override
@@ -65,10 +71,14 @@ public class PagingAdapter extends RecyclerView.Adapter<PagingAdapter.MyViewHold
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView itemImage;
+        private TextView itemNameTextView;
+        private TextView itemPriceTextView;
 
         public MyViewHolder(View itemView){
             super(itemView);
             itemImage = (ImageView) itemView.findViewById(R.id.item_image);
+            itemNameTextView = (TextView) itemView.findViewById(R.id.item_name_preview);
+            itemPriceTextView = (TextView) itemView.findViewById(R.id.item_price_preview);
         }
     }
 

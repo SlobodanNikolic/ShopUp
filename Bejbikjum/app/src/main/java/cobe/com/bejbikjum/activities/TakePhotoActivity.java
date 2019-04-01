@@ -44,6 +44,7 @@ import java.util.Locale;
 
 import butterknife.OnClick;
 import cobe.com.bejbikjum.R;
+import cobe.com.bejbikjum.controlers.AppControler;
 
 public class TakePhotoActivity extends AppCompatActivity {
 
@@ -83,7 +84,7 @@ public class TakePhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_take_photo);
 
         requestWritePermission();
-        newCameraOnCreate();
+
 
         cameraPreview = (TextureView) findViewById(R.id.camera_preview);
         overlay = (RelativeLayout) findViewById(R.id.overlay);
@@ -109,7 +110,10 @@ public class TakePhotoActivity extends AppCompatActivity {
                 Bitmap cropped = null;
                 try {
                     //Koristimo za upis na disk
-                    outputPhoto = new FileOutputStream(createImageFile(galleryFolder));
+                    Log.d("TakePhotoActivity", "Gallery folder exists: " +
+                            AppControler.getInstance().getGalleryFolder().exists() +
+                            ", " + AppControler.getInstance().getGalleryFolder().isDirectory());
+                    outputPhoto = new FileOutputStream(createImageFile(AppControler.getInstance().getGalleryFolder()));
                     Bitmap bitmap = cameraPreview.getBitmap();
                     stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -263,10 +267,12 @@ public class TakePhotoActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-
+                    Log.d("TakePhotoActivity", "Write permission granted, creating image gallery.");
                     createImageGallery();
 
                 } else {
+                    Log.d("TakePhotoActivity", "Write permission denied");
+
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -282,10 +288,14 @@ public class TakePhotoActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
+                    Log.d("TakePhotoActivity", "Camera permission granted, creating image gallery.");
 
                     createImageGallery();
+                    newCameraOnCreate();
 
                 } else {
+                    Log.d("TakePhotoActivity", "Camera permission denied");
+
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -508,14 +518,13 @@ public class TakePhotoActivity extends AppCompatActivity {
         galleryFolder = new File(storageDirectory, getResources().getString(R.string.app_name));
 
         if (!galleryFolder.exists()) {
-            try {
-                galleryFolder.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            galleryFolder.mkdirs();
         }
 
-        Log.d("photo", "File path: " + galleryFolder.getAbsolutePath());
+        AppControler.getInstance().setGalleryFolder(galleryFolder);
+
+        Log.d("photo", "File path: " + AppControler.getInstance().getGalleryFolder().getAbsolutePath());
     }
 
 

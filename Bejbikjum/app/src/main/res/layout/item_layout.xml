@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <cobe.com.bejbikjum.helpers.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -24,11 +25,12 @@
 
     <TextView
         android:id="@+id/item_name_preview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:text="Test naziv za neki random item"
         android:textColor="@android:color/black"
-        android:textSize="24sp" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/item_price_preview"
@@ -36,5 +38,5 @@
         android:layout_height="wrap_content"
         android:text="1912313 din"
         android:textColor="@android:color/black"
-        android:textSize="24sp" />
+        android:textSize="14sp" />
 </LinearLayout>

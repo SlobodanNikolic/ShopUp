@@ -9,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,10 +42,14 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView thumbnail;
+        public TextView itemNameTextView;
+        public TextView itemPriceTextView;
 
         public MyViewHolder(View view) {
             super(view);
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            itemNameTextView = (TextView) view.findViewById(R.id.item_name_preview);
+            itemPriceTextView = (TextView) view.findViewById(R.id.item_price_preview);
         }
     }
 
@@ -107,6 +114,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .transition(withCrossFade())
                     .apply(myOptions)
                     .into(imageHolder.thumbnail);
+            imageHolder.itemNameTextView.setText(image.getName());
+            imageHolder.itemPriceTextView.setText(image.getPrice()+"");
         }
         else{
             Log.d("GalleryAdapter", "View type AD");

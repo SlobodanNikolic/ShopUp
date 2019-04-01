@@ -1,5 +1,6 @@
 package cobe.com.bejbikjum.controlers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,15 @@ public class AppControler {
     private Seller currentSeller;
     public Boolean isSeller;
     private List<Item> shopItems;
+    private File galleryFolder;
+
+    public File getGalleryFolder() {
+        return galleryFolder;
+    }
+
+    public void setGalleryFolder(File galleryFolder) {
+        this.galleryFolder = galleryFolder;
+    }
 
     private ArrayList<Item> topRatedItems;
 
